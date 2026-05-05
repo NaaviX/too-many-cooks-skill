@@ -1,27 +1,41 @@
-# Too Many Cooks Skill
+# Too Many Cooks — Skills, rules & presets for AI agents
 
-> Claude Code skill that gives Claude direct access to crypto perpetuals funding rates and delta-neutral arbitrage opportunities across 25 DEX exchanges.
+Drop the Too Many Cooks skill into your favorite AI agent and it becomes a quant-aware analyst for crypto perpetuals funding rates and delta-neutral arbitrage. Powered by the [`@toomanycooks/mcp-server`](https://github.com/toomanycooks/toomanycooks-mcp) MCP server backed by data from 25 DEX exchanges.
 
-## What it does
+Without the skill, the agent has the MCP tools but no domain context. With it, the agent picks the right tool, knows the caveats (fees, liquidity, rate flips), formats arb tables correctly, and avoids the "live-fan-out" tools that don't scale.
 
-Once installed, Claude can answer questions like:
+## What's in this repo
 
-- *"Show me the top 5 delta-neutral arbitrage opportunities right now."*
-- *"Compare BTC funding rates across HyperLiquid, Lighter, and Extended."*
-- *"How has ETH funding evolved on HyperLiquid this past week?"*
-- *"Which exchanges support stocks and forex perps?"*
+A canonical knowledge source under `canonical/`, plus per-platform recipes in `platforms/<name>/` that get assembled by `scripts/build.ts` into the formats below.
 
-…by calling the [Too Many Cooks MCP server](https://github.com/toomanycooks/toomanycooks-mcp) under the hood.
+| Platform | Output | Status |
+|---|---|---|
+| Claude Code skill | `~/.claude/skills/toomanycooks/SKILL.md` | ✅ |
+| Claude Code plugin | bundled plugin (manifest + skill + slash commands) | ✅ |
+| Cursor | `.cursor/rules/toomanycooks.mdc` | ✅ |
+| Cline | `.clinerules/toomanycooks.md` | ✅ |
+| Continue.dev | `.continue/rules/toomanycooks.md` | ✅ |
+| Codex CLI | section to paste in `AGENTS.md` + `~/.codex/mcp.json` snippet | ✅ |
+| Hermes | system prompt block + Hermes runtime `mcp.json` snippet | ✅ |
+| OpenClaw | AgentSkill | ✅ |
+
+## Get an API key
+
+1. Sign up at https://toomanycooks.app
+2. Dashboard → API Keys → create a key (Free tier: 100 req/day)
+3. Upgrade to Starter / Pro / Quant if your agent runs hot
 
 ## Install
 
-### 1. Get an API key
+### Claude Code (skill)
 
-Free tier (100 req/day) at https://toomanycooks.app/dashboard/api-keys.
+```bash
+mkdir -p ~/.claude/skills/toomanycooks
+curl -fsSL https://raw.githubusercontent.com/toomanycooks/toomanycooks-skill/main/dist/claude-code-skill/SKILL.md \
+  -o ~/.claude/skills/toomanycooks/SKILL.md
+```
 
-### 2. Install the MCP server
-
-Add to `claude_desktop_config.json` (or your Claude Code MCP config):
+Add the MCP server to `claude_desktop_config.json` (or your Claude Code MCP config):
 
 ```json
 {
@@ -29,37 +43,82 @@ Add to `claude_desktop_config.json` (or your Claude Code MCP config):
     "toomanycooks": {
       "command": "npx",
       "args": ["-y", "@toomanycooks/mcp-server"],
-      "env": {
-        "TMC_API_KEY": "tmc_live_..."
-      }
+      "env": { "TMC_API_KEY": "tmc_live_..." }
     }
   }
 }
 ```
 
-### 3. Install this skill
+### Claude Code (plugin)
 
-Copy `SKILL.md` into your Claude Code skills folder:
+Available on the Claude Plugin Marketplace as `toomanycooks`. The plugin bundles the skill, the MCP server registration, and two slash commands (`/tmc-arb`, `/tmc-rates`).
+
+Mirror repo: https://github.com/toomanycooks/toomanycooks-claude-plugin
+
+### Cursor
+
+Listed on https://cursor.directory as `toomanycooks`. Or install manually:
 
 ```bash
-# macOS / Linux
-mkdir -p ~/.claude/skills/toomanycooks
-curl -fsSL https://raw.githubusercontent.com/toomanycooks/toomanycooks-skill/main/SKILL.md \
-  -o ~/.claude/skills/toomanycooks/SKILL.md
-
-# Windows (PowerShell)
-mkdir -Force "$HOME\.claude\skills\toomanycooks"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toomanycooks/toomanycooks-skill/main/SKILL.md" `
-  -OutFile "$HOME\.claude\skills\toomanycooks\SKILL.md"
+mkdir -p .cursor/rules
+curl -fsSL https://raw.githubusercontent.com/toomanycooks/toomanycooks-cursor/main/.cursor/rules/toomanycooks.mdc \
+  -o .cursor/rules/toomanycooks.mdc
 ```
 
-Or just `git clone` this repo into `~/.claude/skills/toomanycooks/`.
+Then add the MCP server to `~/.cursor/mcp.json` using the snippet above.
 
-Restart Claude. You should now see "toomanycooks" in your skill list.
+### Cline
 
-## How it differs from raw MCP usage
+```bash
+mkdir -p .clinerules
+curl -fsSL https://raw.githubusercontent.com/toomanycooks/toomanycooks-skill/main/dist/cline/.clinerules/toomanycooks.md \
+  -o .clinerules/toomanycooks.md
+```
 
-The MCP server alone gives Claude the *tools*. This skill adds *domain knowledge* on top: how to interpret funding rates, what caveats to mention (fees, liquidity, rate flips), and which tool to reach for in which situation. Without the skill, Claude has the tools but no context — it would call them naively. With the skill, it behaves like a quant analyst.
+Configure the MCP server in your Cline settings.
+
+### Continue.dev
+
+```bash
+mkdir -p .continue/rules
+curl -fsSL https://raw.githubusercontent.com/toomanycooks/toomanycooks-skill/main/dist/continue/.continue/rules/toomanycooks.md \
+  -o .continue/rules/toomanycooks.md
+```
+
+### Codex CLI
+
+1. Append the contents of `dist/codex/AGENTS.snippet.md` to your project's `AGENTS.md`.
+2. Add the MCP server config from `dist/codex/mcp-snippet.json` to `~/.codex/mcp.json`.
+
+### Hermes
+
+1. Append the contents of `dist/hermes/system-prompt.md` to your Hermes agent system prompt.
+2. Add the MCP server config from `dist/hermes/mcp-snippet.json` to your Hermes runtime config.
+
+### OpenClaw
+
+Drop `dist/openclaw/skills/toomanycooks/SKILL.md` (and its parent `toomanycooks/` directory) into your OpenClaw gateway's skills directory and register the MCP server using `dist/openclaw/skills/toomanycooks/mcp-snippet.json`.
+
+## Develop
+
+```bash
+git clone https://github.com/toomanycooks/toomanycooks-skill
+cd toomanycooks-skill
+npm install
+npm run build         # generate everything in dist/
+npm test              # run snapshot + unit tests
+npm run check         # lint
+```
+
+To add a new platform: create `platforms/<name>/recipe.json` (and optionally `header.md`), run `npm run build`, add a snapshot test under `tests/snapshots/`.
+
+## Maintenance
+
+When the API or the MCP server changes, edit the relevant block under `canonical/`, bump `version` in `canonical/_frontmatter.yml`, commit. CI rebuilds, runs snapshot tests (which fail loudly on output drift, forcing a deliberate `vitest -u`), and pushes to mirror repos.
+
+## CI setup
+
+The `mirror.yml` workflow needs a repo secret `MIRROR_PUSH_TOKEN`: a fine-grained GitHub PAT with `Contents: Read and write` on the mirrored repos (`toomanycooks-claude-plugin`, `toomanycooks-cursor`).
 
 ## License
 
