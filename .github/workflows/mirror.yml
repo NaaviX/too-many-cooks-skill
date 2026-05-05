@@ -1,0 +1,29 @@
+name: mirror
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [claude-code-plugin, cursor]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Mirror to ${{ matrix.platform }}
+        env:
+          MIRROR_PUSH_TOKEN: ${{ secrets.MIRROR_PUSH_TOKEN }}
+        run: |
+          git config --global user.email "ci@toomanycooks.app"
+          git config --global user.name "Too Many Cooks CI"
+          npm run mirror -- --platform=${{ matrix.platform }}
