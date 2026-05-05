@@ -1,7 +1,15 @@
 ## Quick decision tree
 
-- "Best arb / what to trade / compare exchanges for ticker X" → `find_arbitrage_strategies`
+- "What's interesting / anomalies / outliers right now" → `get_funding_spikes`
+- "Best arb / what to trade" → `find_arbitrage_strategies` (top-N) or `find_strategy_for_ticker` (one symbol)
+- "Compare ticker X across exchanges" → `get_ticker_markets` (DB-backed, single request)
+- "Show me everything / market overview" → `get_aggregated_markets` (filterable) or `get_platform_stats` (totals)
+- "Top/bottom funding rates" → `get_market_extremes`
+- "Which exchanges list ticker X / autocomplete" → `list_tickers`
 - "How has rate evolved on exchange Y" → `get_historical_funding`
-- "Current rate of X on Y" → `get_historical_funding` with `periodDays: 1`, take the most recent point
+- "Current rate of X on Y" → `get_market_for_ticker_on_exchange` (or `get_historical_funding` w/ `periodDays: 1`)
+- "Project PnL for a chosen pair" → `simulate_strategy`
+- "Spot/perp arbitrage" → `find_spot_strategies`
+- "Is this exchange's data fresh / why are results stale" → `get_exchange_status`
 - "Which exchanges are supported" → `list_exchanges`
 - Auth/quota debug → `whoami`

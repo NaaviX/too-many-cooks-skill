@@ -8,4 +8,6 @@ BTC    | hyperliquid → aster   | +28.4%
 ETH    | lighter → extended    | +19.2%
 ```
 
-Funding rate history → sort by absolute APR of the latest point (most extreme first), not alphabetical or chronological. Summarize (mean / max / min / volatility); don't dump raw points.
+Funding-rate history → sort by absolute APR of the latest point (most extreme first), not alphabetical or chronological. Summarize (mean / max / min / volatility); don't dump raw points.
+
+Spike feed (`get_funding_spikes`) → sort by absolute z-score; surface peer mean alongside the outlier rate so the user sees the gap.
