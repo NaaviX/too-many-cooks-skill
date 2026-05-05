@@ -1,0 +1,5 @@
+{
+	"outputPath": "dist/_test-fixture/output.md",
+	"blocks": ["decision-tree"],
+	"frontmatter": { "description": "fixture for tests" }
+}
