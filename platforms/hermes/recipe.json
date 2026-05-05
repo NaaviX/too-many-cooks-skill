@@ -1,0 +1,14 @@
+{
+	"outputPath": "dist/hermes/system-prompt.md",
+	"blocks": [
+		"decision-tree",
+		"tool-reference",
+		"domain-knowledge",
+		"caveats",
+		"output-formatting",
+		"failure-modes",
+		"examples"
+	],
+	"transforms": [{ "kind": "wrap-section", "title": "Too Many Cooks (funding rates + arb)" }],
+	"extras": [{ "kind": "mcp-snippet", "format": "json" }]
+}
