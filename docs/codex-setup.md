@@ -30,7 +30,7 @@ Codex doesn't have a "skill" mechanism like Claude Code, so to get the same doma
 
 ```markdown
 You have access to the Too Many Cooks MCP server, which exposes 6 tools for querying
-crypto perpetuals funding rates and finding delta-neutral arbitrage across 26 DEX
+crypto perpetuals funding rates and finding delta-neutral arbitrage across 25 DEX
 exchanges (HyperLiquid, Lighter, Extended, Aster, Paradex, EdgeX, …).
 
 When the user asks about funding rates or arbitrage:

@@ -56,11 +56,11 @@ The SDK and MCP server are 1:1 equivalent — the MCP server is literally a thin
 For non-Node runtimes (Python, Go, Rust), call the REST API directly:
 
 ```bash
-curl https://api.toomanycooks.app/api/v1/strategies/delta-neutral?count=5 \
+curl https://api.antoine-legrand.dev/api/v1/strategies/delta-neutral?count=5 \
   -H "Authorization: Bearer tmc_live_..."
 ```
 
-See https://api.toomanycooks.app/api-docs for the full OpenAPI spec.
+See https://api.antoine-legrand.dev/api-docs for the full OpenAPI spec.
 
 ## Quota awareness
 

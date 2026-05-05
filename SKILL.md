@@ -1,109 +1,90 @@
 ---
 name: toomanycooks
-description: Query crypto perpetuals funding rates across 26 DEX exchanges and find delta-neutral arbitrage opportunities via the Too Many Cooks API. Use when the user asks about funding rates, delta-neutral arbitrage, perp/perp spreads, or comparing rates between exchanges like HyperLiquid, Lighter, Extended, Aster, Paradex, EdgeX, etc. Trigger on questions like "what's the best arb right now", "show me funding rates for BTC", "compare ETH on hyperliquid vs lighter".
+description: Query crypto perpetuals funding rates and find delta-neutral arbitrage across 25 DEX exchanges (HyperLiquid, Lighter, Extended, Aster, Paradex, EdgeX, …) via the Too Many Cooks API. Triggers on funding-rate, delta-neutral, perp/perp spread, or "best arb right now"-type questions.
 ---
 
 # Too Many Cooks — Crypto Funding Rates Skill
 
-You have access to the Too Many Cooks API for crypto perpetuals funding rates and delta-neutral arbitrage strategy detection across **26 DEX exchanges**: HyperLiquid, Lighter, Extended, Paradex, EdgeX, Aster, Variational, Reya, Pacifica, Backpack, Ethereal, Vest, TradeXYZ, Drift, Evedex, APEX, ARKM, dYdX, Aevo, 01, Nado, GRVT, Astros, StandX, Hibachi, Bullpen.
+Powered by the `@toomanycooks/mcp-server` MCP server. Setup lives in this skill's [README.md](./README.md) — if the user hasn't installed the MCP server yet, point them there.
 
-## How to use this skill
+## Quick decision tree
 
-This skill is powered by an MCP server (`@toomanycooks/mcp-server`). When the user asks about funding rates or arbitrage, call the relevant MCP tool:
+- "Best arb / what to trade / compare exchanges for ticker X" → `find_arbitrage_strategies`
+- "How has rate evolved on exchange Y" → `get_historical_funding`
+- "Current rate of X on Y" → `get_historical_funding` with `periodDays: 1`, take the most recent point
+- "Which exchanges are supported" → `list_exchanges`
+- Auth/quota debug → `whoami`
 
-| Tool | When to use |
-|---|---|
-| `list_exchanges` | User asks which exchanges are supported, or you need a valid exchange key for another tool |
-| `get_funding_rates` | User wants the live funding rate snapshot for one specific exchange |
-| `get_historical_funding` | User wants to see how funding rates have evolved over time for a specific ticker on a specific exchange |
-| `find_arbitrage_strategies` | **Default tool for arbitrage questions.** User wants to know "where's the best arb right now", "what should I trade", or similar |
-| `compare_exchanges_for_ticker` | User wants to compare the funding rate of a single ticker across multiple exchanges |
-| `whoami` | Debug auth issues or report quota usage |
+## Tool reference
 
-## Setup (one-time, by the user)
+### Use these (database-backed)
 
-If the user hasn't installed the MCP server yet, give them this snippet for `claude_desktop_config.json`:
+| Tool | When | Useful args |
+|---|---|---|
+| `list_exchanges` | Need a valid exchange key, or user asks what's supported | — |
+| `get_historical_funding` | Rate evolution over time, or "current rate" via the latest point | `exchange`, `tickers: []`, `periodDays` |
+| `find_arbitrage_strategies` | **Default for arbitrage questions.** | `count`, `exchanges: []`, `minVolume24h: 1000000`, `minOpenInterest: 1000000`, `periodDays` |
+| `whoami` | Auth debug, quota report | — |
 
-```json
-{
-  "mcpServers": {
-    "toomanycooks": {
-      "command": "npx",
-      "args": ["-y", "@toomanycooks/mcp-server"],
-      "env": {
-        "TMC_API_KEY": "tmc_live_..."
-      }
-    }
-  }
-}
-```
+### Do NOT use
 
-They get a free API key (100 req/day) at https://toomanycooks.app/dashboard/api-keys.
+| Tool | Why | Reroute to |
+|---|---|---|
+| `get_funding_rates` | Hits live exchange APIs — slow, unaligned, not the supported path | `get_historical_funding` (latest point) |
+| `compare_exchanges_for_ticker` | Same problem (live fan-out) | `get_historical_funding` per exchange in parallel, or `find_arbitrage_strategies` with `exchanges: [...]` |
 
-## Domain knowledge — funding rate basics
+The DB stores periodically-collected, time-aligned, deduped snapshots. Live-exchange queries are for ingestion, not analysis.
 
-Funding rates are periodic payments between long and short perpetual futures positions, designed to keep the perp price tethered to spot.
+### Hard argument constraints
 
-- **Positive funding rate** = longs pay shorts (perp > spot, market is bullish)
-- **Negative funding rate** = shorts pay longs (perp < spot, market is bearish)
-- **APR convention**: the API returns funding rates as **annualized decimals** (e.g. `0.15` = 15% APR, not 15bps). Multiply by 100 only at display time.
-- **Delta-neutral arbitrage**: long the exchange with the lowest funding rate, short the exchange with the highest. The spread is the strategy's APR.
+- `tickers` must be **UPPERCASE strings**, **1–20 per call** (e.g. `["BTC", "ETH"]`, never `["btc"]`).
+- `count` ≤ **50**, `periodDays` ≤ **30**. Anything larger is rejected.
+- Exchange keys are lowercase (e.g. `"hyperliquid"`, `"edgex"`). Get them from `list_exchanges` if unsure — never invent.
+- `list_exchanges` returns a `supportsRWA` flag — filter on it when the user asks about stocks, forex, or commodities perps.
 
-## How to interpret arbitrage strategies
+## Non-obvious domain knowledge
 
-When `find_arbitrage_strategies` returns results, each row contains:
+- **APRs are returned as decimals** — `0.15` = 15% APR. Multiply by 100 only at display time.
+- **Delta-neutral arb**: long the lowest funding APR (pay less / earn more), short the highest (receive funding). Spread = strategy APR.
+- **`profitAPR` ≠ `shortFundingRateAPR − longFundingRateAPR`** in general. `profitAPR` is the *average* spread over the `periodDays` lookback window; the long/short rates are the *latest* snapshot. They diverge when rates have moved.
 
-- `ticker` — the asset (e.g. "BTC")
-- `longExchange` — exchange where you'd open the long leg (lowest funding APR — you pay less or earn more)
-- `shortExchange` — exchange where you'd open the short leg (highest funding APR — you receive funding)
-- `longFundingRateAPR`, `shortFundingRateAPR` — the underlying rates (decimals)
-- `profitAPR` = `shortFundingRateAPR - longFundingRateAPR` — the gross spread
+## Caveats to mention proactively
 
-**Important caveats to mention proactively**:
-1. **Profit is gross of fees**: trading fees, gas, withdrawal/transfer costs eat into the spread.
-2. **Funding rates can flip**: a 30% APR spread today can become a -10% spread tomorrow. Strategies need active monitoring.
-3. **Liquidity matters**: a high APR on a market with $50k of OI is meaningless — slippage will dwarf the funding edge. Use the `--min-volume 1000000 --min-oi 1000000` filters when relevance matters.
-4. **This is not financial advice**: you're surfacing market structure, not recommending trades.
+1. **Gross of fees** — trading fees, gas, withdrawals eat the spread.
+2. **Rates flip** — a +30% APR today can be −10% tomorrow. Active monitoring required.
+3. **Liquidity matters** — high APR on $50k OI is meaningless (slippage). Apply `minVolume24h: 1000000`, `minOpenInterest: 1000000` when relevance matters.
+4. **Not financial advice** — surface market structure, don't recommend trades.
 
 ## Output formatting
 
-When showing arb opportunities, prefer a compact table:
+Arb opportunities → compact table:
 
 ```
 Ticker | Long → Short          | Profit APR
 BTC    | hyperliquid → aster   | +28.4%
 ETH    | lighter → extended    | +19.2%
-...
 ```
 
-When showing funding rates for one exchange, sort by absolute APR (most extreme first) — that's the actionable info, not alphabetical.
+Funding rate history → sort by absolute APR of the latest point (most extreme first), not alphabetical or chronological. Summarize (mean / max / min / volatility); don't dump raw points.
 
 ## Failure modes
 
-- **Auth error**: tell the user to check `TMC_API_KEY` in their MCP config.
-- **Quota error (429)**: suggest upgrading at https://toomanycooks.app/pricing or waiting until the daily/monthly reset.
-- **Empty strategy results**: usually means the volume/OI filters are too tight. Suggest relaxing them.
+- **Auth error** → user should check `TMC_API_KEY` in their MCP config.
+- **429 / quota** → suggest waiting for reset or upgrading at https://toomanycooks.app/pricing.
+- **Empty strategy results** → volume/OI filters likely too tight; suggest relaxing them.
 
 ## Example interactions
 
-**User**: "Show me the top 5 arbitrage opportunities right now"
+**"Top 5 arbs right now"** → `find_arbitrage_strategies` with `count: 5`. Render table. Mention liquidity caveat.
 
-You: Call `find_arbitrage_strategies` with `count: 5`. Render a table. Mention liquidity caveats.
+**"Compare BTC across HL, Lighter, Extended"** → `get_historical_funding` per exchange in parallel (latest point each), or `find_arbitrage_strategies` with `exchanges: ["hyperliquid", "lighter", "extended"]` if they want the long/short pair. **Do not** use `compare_exchanges_for_ticker`.
 
----
+**"Has ETH funding been stable on HL this week?"** → `get_historical_funding`, `exchange: "hyperliquid"`, `tickers: ["ETH"]`, `periodDays: 7`. Summarize stats; don't dump points.
 
-**User**: "Compare BTC funding across HL, Lighter, and Extended"
+**"Current BTC funding on HyperLiquid?"** → `get_historical_funding`, `tickers: ["BTC"]`, `periodDays: 1`. Take latest point. **Do not** use `get_funding_rates`.
 
-You: Call `compare_exchanges_for_ticker` with `ticker: "BTC"`, `exchanges: ["hyperliquid", "lighter", "extended"]`. Show as a sorted table. Identify which would be the long leg and which the short.
+**"What's an arbitrage strategy?"** → Explain the long-low/short-high mechanic. Optionally call `find_arbitrage_strategies` with `count: 3` to ground the explanation.
 
----
+## Advanced workflows
 
-**User**: "Has ETH funding been stable on HyperLiquid this week?"
-
-You: Call `get_historical_funding` with `exchange: "hyperliquid"`, `tickers: ["ETH"]`, `periodDays: 7`. Summarize: mean, max, min, volatility. Don't dump raw data points.
-
----
-
-**User**: "What's an arbitrage strategy?"
-
-You: Explain the concept clearly (longs pay shorts, perp tethering, delta-neutral). Optionally call `find_arbitrage_strategies` with `count: 3` to ground the explanation in current data.
+For multi-step analysis (multi-ticker screens, funding-flip detection, backtesting a delta-neutral pair, realized-PnL reconstruction), see [references/recipes.md](./references/recipes.md). Load it on demand — not for one-off lookups.

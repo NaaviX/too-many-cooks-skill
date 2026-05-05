@@ -1,6 +1,6 @@
 # Too Many Cooks Skill
 
-> Claude Code skill that gives Claude direct access to crypto perpetuals funding rates and delta-neutral arbitrage opportunities across 26 DEX exchanges.
+> Claude Code skill that gives Claude direct access to crypto perpetuals funding rates and delta-neutral arbitrage opportunities across 25 DEX exchanges.
 
 ## What it does
 
