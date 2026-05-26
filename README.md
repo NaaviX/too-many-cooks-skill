@@ -11,7 +11,7 @@ Once installed, Claude can answer questions like:
 - *"How has ETH funding evolved on HyperLiquid this past week?"*
 - *"Which exchanges support stocks and forex perps?"*
 
-…by calling the [Too Many Cooks MCP server](https://github.com/toomanycooks/toomanycooks-mcp) under the hood.
+…by calling the `@toomanycooks/mcp-server` MCP server under the hood.
 
 ## Install
 
@@ -44,16 +44,15 @@ Copy `SKILL.md` into your Claude Code skills folder:
 ```bash
 # macOS / Linux
 mkdir -p ~/.claude/skills/toomanycooks
-curl -fsSL https://raw.githubusercontent.com/toomanycooks/toomanycooks-skill/main/SKILL.md \
-  -o ~/.claude/skills/toomanycooks/SKILL.md
-
-# Windows (PowerShell)
-mkdir -Force "$HOME\.claude\skills\toomanycooks"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toomanycooks/toomanycooks-skill/main/SKILL.md" `
-  -OutFile "$HOME\.claude\skills\toomanycooks\SKILL.md"
+cp /path/to/toomanycooks/skill/SKILL.md ~/.claude/skills/toomanycooks/SKILL.md
 ```
 
-Or just `git clone` this repo into `~/.claude/skills/toomanycooks/`.
+Or clone this workspace and symlink:
+
+```bash
+mkdir -p ~/.claude/skills
+ln -s /path/to/toomanycooks/skill ~/.claude/skills/toomanycooks
+```
 
 Restart Claude. You should now see "toomanycooks" in your skill list.
 

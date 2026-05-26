@@ -9,7 +9,8 @@ Powered by the `@toomanycooks/mcp-server` MCP server. Setup lives in this skill'
 
 ## Quick decision tree
 
-- "Best arb / what to trade / compare exchanges for ticker X" → `find_arbitrage_strategies`
+- "Best arb / what to trade" → `find_arbitrage_strategies`
+- "Compare exchanges for ticker X" → `get_ticker_markets` (DB-backed, 1 quota point) or `compare_exchanges_for_ticker`
 - "How has rate evolved on exchange Y" → `get_historical_funding`
 - "Current rate of X on Y" → `get_historical_funding` with `periodDays: 1`, take the most recent point
 - "Which exchanges are supported" → `list_exchanges`
@@ -30,8 +31,9 @@ Powered by the `@toomanycooks/mcp-server` MCP server. Setup lives in this skill'
 
 | Tool | Why | Reroute to |
 |---|---|---|
-| `get_funding_rates` | Hits live exchange APIs — slow, unaligned, not the supported path | `get_historical_funding` (latest point) |
-| `compare_exchanges_for_ticker` | Same problem (live fan-out) | `get_historical_funding` per exchange in parallel, or `find_arbitrage_strategies` with `exchanges: [...]` |
+| `get_funding_rates` | Hits live exchange APIs — slow, unaligned, not the supported path | `get_aggregated_markets` with `exchanges: [key]`, or `get_historical_funding` (latest point) |
+
+`compare_exchanges_for_ticker` is now backed by the DB-aggregated `/tickers/:ticker/markets` endpoint (1 quota point). Prefer `get_ticker_markets` for richer output (includes `suggestedArb`), but either is safe.
 
 The DB stores periodically-collected, time-aligned, deduped snapshots. Live-exchange queries are for ingestion, not analysis.
 
