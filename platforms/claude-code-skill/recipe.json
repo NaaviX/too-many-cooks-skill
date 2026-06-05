@@ -1,0 +1,17 @@
+{
+	"outputPath": "dist/claude-code-skill/SKILL.md",
+	"blocks": [
+		"decision-tree",
+		"tool-reference",
+		"domain-knowledge",
+		"caveats",
+		"output-formatting",
+		"failure-modes",
+		"examples",
+		"advanced-workflows"
+	],
+	"frontmatter": {
+		"name": "toomanycooks",
+		"description": "Query crypto perpetuals funding rates and find delta-neutral arbitrage across 25 DEX exchanges (HyperLiquid, Lighter, Extended, Aster, Paradex, EdgeX, …) via the Too Many Cooks API. Triggers on funding-rate, delta-neutral, perp/perp spread, or \"best arb right now\"-type questions."
+	}
+}

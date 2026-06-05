@@ -1,0 +1,12 @@
+{
+	"outputPath": "dist/cline/.clinerules/toomanycooks.md",
+	"blocks": [
+		"decision-tree",
+		"tool-reference",
+		"domain-knowledge",
+		"caveats",
+		"output-formatting",
+		"failure-modes",
+		"examples"
+	]
+}

@@ -1,0 +1,28 @@
+{
+	"name": "@toomanycooks/skills-build",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Build pipeline that declines the Too Many Cooks skill into per-platform skills/rules/presets (Claude Code, Cursor, Cline, Continue, Codex, Hermes, OpenClaw).",
+	"scripts": {
+		"build": "tsx scripts/build.ts",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"check": "biome check .",
+		"check:fix": "biome check --write .",
+		"mirror": "tsx scripts/mirror.ts"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.0",
+		"@types/js-yaml": "^4.0.9",
+		"@types/node": "^20.14.0",
+		"js-yaml": "^4.1.0",
+		"tsx": "^4.16.0",
+		"typescript": "^5.5.0",
+		"vitest": "^2.1.0",
+		"zod": "^3.23.0"
+	},
+	"engines": {
+		"node": ">=20.0.0"
+	}
+}

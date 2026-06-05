@@ -1,27 +1,39 @@
-# Too Many Cooks Skill
+# Too Many Cooks — agent skills, for every platform
 
-> Claude Code skill that gives Claude direct access to crypto perpetuals funding rates and delta-neutral arbitrage opportunities across 25 DEX exchanges.
+> Crypto perpetuals **funding rates** and **delta-neutral arbitrage** across 25 DEX
+> exchanges, available as a one-install plugin/skill/rule for the major AI agents.
 
-## What it does
+Every integration is the same two pieces:
 
-Once installed, Claude can answer questions like:
+1. **The MCP server** (`@toomanycooks/mcp-server`) — gives the agent the *tools*
+   (`find_arbitrage_strategies`, `get_historical_funding`, `list_exchanges`, …).
+2. **The skill/rule** (this repo) — gives the agent the *know-how*: which tool to
+   reach for, how to read APRs, what caveats to surface. Without it the agent has
+   the tools but calls them naively; with it, it behaves like a quant analyst.
 
-- *"Show me the top 5 delta-neutral arbitrage opportunities right now."*
-- *"Compare BTC funding rates across HyperLiquid, Lighter, and Extended."*
-- *"How has ETH funding evolved on HyperLiquid this past week?"*
-- *"Which exchanges support stocks and forex perps?"*
+## 0. Get an API key (once, for all platforms)
 
-…by calling the `@toomanycooks/mcp-server` MCP server under the hood.
+Free tier (100 req/day) at <https://toomanycooks.app/dashboard/api-keys>. The key
+looks like `tmc_live_…`. Every config below references it as `TMC_API_KEY`.
 
-## Install
+## 1. Pick your platform
 
-### 1. Get an API key
+All generated artifacts live under `dist/` (run `npm run build`). Each platform's
+config uses the **same** MCP server launched via `npx`, so nothing to install
+globally.
 
-Free tier (100 req/day) at https://toomanycooks.app/dashboard/api-keys.
+| Platform | Skill/rule file | MCP config |
+|---|---|---|
+| **Claude Code / Claude Desktop** (skill) | `dist/claude-code-skill/SKILL.md` → `~/.claude/skills/toomanycooks/` | `mcpServers` block (below) |
+| **Claude Code** (plugin) | `dist/claude-code-plugin/` (bundles skill + `/tmc-arb`, `/tmc-rates` + MCP) | baked into `.claude-plugin/plugin.json` |
+| **Cursor** | `dist/cursor/.cursor/rules/toomanycooks.mdc` → project `.cursor/rules/` | add to `~/.cursor/mcp.json` |
+| **Cline** | `dist/cline/.clinerules/toomanycooks.md` → project `.clinerules/` | Cline MCP settings |
+| **Continue.dev** | `dist/continue/.continue/rules/toomanycooks.md` → project `.continue/rules/` | Continue MCP config |
+| **Codex CLI** | paste `dist/codex/AGENTS.snippet.md` into your `AGENTS.md` | `dist/codex/mcp-snippet.json` → `~/.codex/` |
+| **Hermes** | paste `dist/hermes/system-prompt.md` into the system prompt | `dist/hermes/mcp-snippet.json` |
+| **OpenClaw** | `dist/openclaw/skills/toomanycooks/SKILL.md` | `dist/openclaw/skills/toomanycooks/mcp-snippet.json` |
 
-### 2. Install the MCP server
-
-Add to `claude_desktop_config.json` (or your Claude Code MCP config):
+### The MCP server config (Claude Desktop / Claude Code shape)
 
 ```json
 {
@@ -29,36 +41,73 @@ Add to `claude_desktop_config.json` (or your Claude Code MCP config):
     "toomanycooks": {
       "command": "npx",
       "args": ["-y", "@toomanycooks/mcp-server"],
-      "env": {
-        "TMC_API_KEY": "tmc_live_..."
-      }
+      "env": { "TMC_API_KEY": "tmc_live_..." }
     }
   }
 }
 ```
 
-### 3. Install this skill
+Codex uses the same fields under a `servers` key; the exact snippet ships next to
+each platform's output as `mcp-snippet.json`.
 
-Copy `SKILL.md` into your Claude Code skills folder:
+## 2. What you can now ask
+
+- *"Show me the top 5 delta-neutral arbitrage opportunities right now."*
+- *"Compare BTC funding rates across HyperLiquid, Lighter, and Extended."*
+- *"How has ETH funding evolved on HyperLiquid this past week?"*
+- *"Which exchanges support stocks and forex perps?"*
+
+---
+
+## Also available: CLI and SDK (for humans & scripts)
+
+These are **developer tools**, not agent plugins — published straight to npm.
+
+**CLI** (`tmc`):
 
 ```bash
-# macOS / Linux
-mkdir -p ~/.claude/skills/toomanycooks
-cp /path/to/toomanycooks/skill/SKILL.md ~/.claude/skills/toomanycooks/SKILL.md
+npm i -g @toomanycooks/cli   # then: tmc --help
+# or one-shot, no install:
+npx -y @toomanycooks/cli strategies -c 5 --json
 ```
 
-Or clone this workspace and symlink:
+Set `TMC_API_KEY` in your env (or `tmc auth set`). Every command takes `--json`
+for shell pipelines.
+
+**SDK** (`@toomanycooks/sdk`) — zero-dependency TypeScript client:
 
 ```bash
-mkdir -p ~/.claude/skills
-ln -s /path/to/toomanycooks/skill ~/.claude/skills/toomanycooks
+npm i @toomanycooks/sdk
 ```
 
-Restart Claude. You should now see "toomanycooks" in your skill list.
+```ts
+import { TmcApiClient } from "@toomanycooks/sdk";
 
-## How it differs from raw MCP usage
+const client = new TmcApiClient(); // reads TMC_API_KEY from env
+const strategies = await client.findStrategies({ count: 5 });
+console.log(strategies);
+```
 
-The MCP server alone gives Claude the *tools*. This skill adds *domain knowledge* on top: how to interpret funding rates, what caveats to mention (fees, liquidity, rate flips), and which tool to reach for in which situation. Without the skill, Claude has the tools but no context — it would call them naively. With the skill, it behaves like a quant analyst.
+---
+
+## Maintaining this repo
+
+Single source of truth is `canonical/*.md` (shared markdown blocks) +
+`platforms/<name>/recipe.json` (which blocks, what frontmatter, what extras).
+A ~150-line build assembles every platform output.
+
+```bash
+npm install
+npm run build     # regenerate dist/ for all 8 platforms
+npm test          # vitest — snapshot per platform + unit tests
+npm run check     # Biome lint + format
+```
+
+To change the knowledge (new tool, pricing, caveat): edit the relevant
+`canonical/*.md` block once, bump `version` in `canonical/_frontmatter.yml`,
+`npm run build`, re-bless snapshots (`npm test -- -u`), commit. CI mirrors the
+marketplace-bound outputs to their standalone repos — see
+[MARKETPLACES.md](./MARKETPLACES.md).
 
 ## License
 

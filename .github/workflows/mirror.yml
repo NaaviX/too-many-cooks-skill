@@ -1,0 +1,41 @@
+name: mirror
+
+# Pushes the built dist/<platform>/ trees into the standalone mirror repos that
+# certain marketplaces require. Runs after a successful build on main.
+#
+# Setup: create a PAT with `repo` scope on the mirror repos and store it as the
+# repository secret MIRROR_PUSH_TOKEN.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'toomanycooks'
+    strategy:
+      matrix:
+        include:
+          - platform: claude-code-plugin
+            repo: toomanycooks/toomanycooks-claude-plugin
+          - platform: cursor
+            repo: toomanycooks/toomanycooks-cursor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - name: Push to mirror
+        env:
+          MIRROR_PUSH_TOKEN: ${{ secrets.MIRROR_PUSH_TOKEN }}
+        run: |
+          git config --global user.name "toomanycooks-bot"
+          git config --global user.email "bot@toomanycooks.app"
+          npm run mirror -- \
+            --platform=${{ matrix.platform }} \
+            --repo=https://x-access-token:${MIRROR_PUSH_TOKEN}@github.com/${{ matrix.repo }}.git
