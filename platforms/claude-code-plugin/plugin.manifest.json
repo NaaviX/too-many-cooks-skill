@@ -2,14 +2,23 @@
 	"name": "toomanycooks",
 	"displayName": "Too Many Cooks",
 	"description": "Crypto perpetuals funding rates + delta-neutral arbitrage across 25 DEX exchanges via the Too Many Cooks MCP server.",
-	"author": "toomanycooks.app",
+	"author": { "name": "toomanycooks.app", "url": "https://toomanycooks.app" },
 	"homepage": "https://toomanycooks.app",
 	"license": "MIT",
+	"userConfig": {
+		"api_key": {
+			"type": "string",
+			"title": "TMC API key",
+			"description": "Your Too Many Cooks API key (tmc_live_…). Get one free at https://toomanycooks.app/dashboard/api-keys",
+			"sensitive": true,
+			"required": true
+		}
+	},
 	"mcpServers": {
 		"toomanycooks": {
 			"command": "npx",
 			"args": ["-y", "@toomanycooks/mcp-server"],
-			"env": { "TMC_API_KEY": "tmc_live_..." }
+			"env": { "TMC_API_KEY": "${user_config.api_key}" }
 		}
 	}
 }

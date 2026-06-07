@@ -11,5 +11,7 @@
 	],
 	"frontmatter": {
 		"description": "Crypto perpetuals funding rates + delta-neutral arbitrage via the Too Many Cooks MCP server."
-	}
+	},
+	"extrasDir": "dist/continue",
+	"extras": [{ "kind": "mcp-snippet", "format": "json" }]
 }

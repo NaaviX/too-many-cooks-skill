@@ -42,6 +42,16 @@ export async function renderExtra(extra: Extra, ctx: ExtrasContext): Promise<voi
 			await fs.writeFile(outPath, `${JSON.stringify(manifest, null, 2)}\n`);
 			return;
 		}
+		case "marketplace": {
+			const raw = await fs.readFile(path.join(ctx.platformDir, extra.source), "utf8");
+			// Stamp the current version into every `"version": "$version"` placeholder.
+			const stamped = raw.replaceAll('"$version"', JSON.stringify(ctx.frontmatter.version));
+			const catalog = JSON.parse(stamped) as Record<string, unknown>;
+			const outPath = path.join(ctx.outputDir, ".claude-plugin/marketplace.json");
+			await fs.mkdir(path.dirname(outPath), { recursive: true });
+			await fs.writeFile(outPath, `${JSON.stringify(catalog, null, 2)}\n`);
+			return;
+		}
 		case "slash-commands": {
 			const sourceDir = path.join(ctx.platformDir, extra.source);
 			const targetDir = path.join(ctx.outputDir, "commands");

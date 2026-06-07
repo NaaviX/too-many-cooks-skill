@@ -1,7 +1,7 @@
 ---
 name: toomanycooks
 displayName: Too Many Cooks
-version: 1.1.0
+version: 1.2.0
 description: Crypto perpetuals funding rates + delta-neutral arbitrage via the Too Many Cooks MCP server.
 homepage: https://toomanycooks.app
 license: MIT

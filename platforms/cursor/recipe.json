@@ -13,5 +13,7 @@
 		"description": "Crypto perpetuals funding rates + delta-neutral arbitrage across 25 DEX exchanges via the Too Many Cooks MCP server.",
 		"globs": [],
 		"alwaysApply": false
-	}
+	},
+	"extrasDir": "dist/cursor",
+	"extras": [{ "kind": "mcp-snippet", "format": "json" }]
 }

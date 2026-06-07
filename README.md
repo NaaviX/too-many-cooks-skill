@@ -25,10 +25,10 @@ globally.
 | Platform | Skill/rule file | MCP config |
 |---|---|---|
 | **Claude Code / Claude Desktop** (skill) | `dist/claude-code-skill/SKILL.md` → `~/.claude/skills/toomanycooks/` | `mcpServers` block (below) |
-| **Claude Code** (plugin) | `dist/claude-code-plugin/` (bundles skill + `/tmc-arb`, `/tmc-rates` + MCP) | baked into `.claude-plugin/plugin.json` |
-| **Cursor** | `dist/cursor/.cursor/rules/toomanycooks.mdc` → project `.cursor/rules/` | add to `~/.cursor/mcp.json` |
-| **Cline** | `dist/cline/.clinerules/toomanycooks.md` → project `.clinerules/` | Cline MCP settings |
-| **Continue.dev** | `dist/continue/.continue/rules/toomanycooks.md` → project `.continue/rules/` | Continue MCP config |
+| **Claude Code** (plugin) | `dist/claude-code-plugin/` (bundles skill + `/tmc-arb`, `/tmc-rates`, `/tmc-setup` + MCP) — install via marketplace (below) | prompts for the key at enable time (`userConfig`) |
+| **Cursor** | `dist/cursor/.cursor/rules/toomanycooks.mdc` → project `.cursor/rules/` | `dist/cursor/mcp-snippet.json` → `~/.cursor/mcp.json` |
+| **Cline** | `dist/cline/.clinerules/toomanycooks.md` → project `.clinerules/` | `dist/cline/mcp-snippet.json` → Cline MCP settings |
+| **Continue.dev** | `dist/continue/.continue/rules/toomanycooks.md` → project `.continue/rules/` | `dist/continue/mcp-snippet.json` → Continue MCP config |
 | **Codex CLI** | paste `dist/codex/AGENTS.snippet.md` into your `AGENTS.md` | `dist/codex/mcp-snippet.json` → `~/.codex/` |
 | **Hermes** | paste `dist/hermes/system-prompt.md` into the system prompt | `dist/hermes/mcp-snippet.json` |
 | **OpenClaw** | `dist/openclaw/skills/toomanycooks/SKILL.md` | `dist/openclaw/skills/toomanycooks/mcp-snippet.json` |
@@ -50,12 +50,41 @@ globally.
 Codex uses the same fields under a `servers` key; the exact snippet ships next to
 each platform's output as `mcp-snippet.json`.
 
+### Claude Code plugin (one-line install)
+
+The plugin output (`dist/claude-code-plugin/`) is also a self-contained plugin
+**marketplace** — it carries `.claude-plugin/marketplace.json` alongside
+`.claude-plugin/plugin.json`. Once that tree is pushed to a git host (CI mirrors
+it to `toomanycooks/toomanycooks-claude-plugin` — see [MARKETPLACES.md](./MARKETPLACES.md)):
+
+```text
+/plugin marketplace add toomanycooks/toomanycooks-claude-plugin
+/plugin install toomanycooks@toomanycooks
+```
+
+On enable, Claude Code prompts for your `TMC_API_KEY` (declared as a `sensitive`
+`userConfig` value, stored in the OS keychain) — no hand-editing of the MCP
+config. To test the local build before publishing:
+
+```bash
+claude --plugin-dir ./dist/claude-code-plugin
+```
+
 ## 2. What you can now ask
 
 - *"Show me the top 5 delta-neutral arbitrage opportunities right now."*
 - *"Compare BTC funding rates across HyperLiquid, Lighter, and Extended."*
 - *"How has ETH funding evolved on HyperLiquid this past week?"*
 - *"Which exchanges support stocks and forex perps?"*
+
+### Personalize the answers (optional)
+
+Run **`/tmc-setup`** (Claude Code plugin) once to pick your default exchanges,
+liquidity floors, risk tolerance, result count, and funding window. It writes
+`~/.toomanycooks/preferences.md`; the skill reads that file on every query and
+applies the values as defaults (inline instructions always override them). On
+other platforms, create the same `key: value` file by hand — the skill picks it
+up automatically.
 
 ---
 

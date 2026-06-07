@@ -60,7 +60,9 @@ export async function buildPlatform(name: string, ctx: BuildContext): Promise<vo
 	await fs.writeFile(outputPath, `${body}\n`);
 
 	if (recipe.extras) {
-		const outputDir = path.dirname(outputPath);
+		const outputDir = recipe.extrasDir
+			? path.join(ctx.rootDir, recipe.extrasDir)
+			: path.dirname(outputPath);
 		for (const extra of recipe.extras) {
 			await renderExtra(extra, {
 				platformDir,

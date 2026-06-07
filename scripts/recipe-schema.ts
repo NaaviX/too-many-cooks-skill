@@ -8,6 +8,7 @@ const TransformSchema = z.discriminatedUnion("kind", [
 
 const ExtraSchema = z.discriminatedUnion("kind", [
 	z.object({ kind: z.literal("plugin-manifest"), source: z.string() }),
+	z.object({ kind: z.literal("marketplace"), source: z.string() }),
 	z.object({ kind: z.literal("slash-commands"), source: z.string() }),
 	z.object({
 		kind: z.literal("mcp-snippet"),
@@ -21,6 +22,13 @@ export const RecipeSchema = z.object({
 	blocks: z.array(z.string()),
 	frontmatter: z.record(z.string(), z.unknown()).optional(),
 	transforms: z.array(TransformSchema).optional(),
+	/**
+	 * Where `extras` (manifest, marketplace, slash-commands) are written, relative
+	 * to the repo root. Defaults to the directory of `outputPath`. Plugins need
+	 * this because the SKILL.md lives in `skills/<name>/` while the manifest and
+	 * `commands/` must sit at the *plugin root* one level up.
+	 */
+	extrasDir: z.string().optional(),
 	extras: z.array(ExtraSchema).optional(),
 });
 

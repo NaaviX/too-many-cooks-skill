@@ -1,0 +1,16 @@
+{
+	"name": "toomanycooks",
+	"description": "Crypto perpetuals funding rates + delta-neutral arbitrage tooling for AI agents, by toomanycooks.app.",
+	"owner": {
+		"name": "toomanycooks.app",
+		"url": "https://toomanycooks.app"
+	},
+	"plugins": [
+		{
+			"name": "toomanycooks",
+			"source": ".",
+			"version": "$version",
+			"description": "Crypto perpetuals funding rates + delta-neutral arbitrage across 25 DEX exchanges (HyperLiquid, Lighter, Extended, Aster, Paradex, EdgeX, …) via the Too Many Cooks MCP server."
+		}
+	]
+}

@@ -8,5 +8,7 @@
 		"output-formatting",
 		"failure-modes",
 		"examples"
-	]
+	],
+	"extrasDir": "dist/cline",
+	"extras": [{ "kind": "mcp-snippet", "format": "json" }]
 }

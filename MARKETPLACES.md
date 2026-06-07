@@ -14,6 +14,22 @@ The mirror repos are fed automatically by `.github/workflows/mirror.yml` on ever
 push to `main` (needs the `MIRROR_PUSH_TOKEN` secret). Create the two repos once,
 then submit each marketplace pointing at its mirror.
 
+The `claude-code-plugin` mirror is a **working plugin marketplace** on its own:
+`dist/claude-code-plugin/` ships `.claude-plugin/marketplace.json` (catalog) next
+to `.claude-plugin/plugin.json` (the plugin, `source: "."`). So before any
+official submission, anyone can already install it directly:
+
+```text
+/plugin marketplace add toomanycooks/toomanycooks-claude-plugin
+/plugin install toomanycooks@toomanycooks
+```
+
+CI gates this with `claude plugin validate dist/claude-code-plugin --strict`
+(in `build.yml`) — the same check the community review pipeline runs. To submit
+to Anthropic's `claude-community` marketplace, use the form at
+`platform.claude.com/plugins/submit` (or `claude.ai/settings/plugins/submit`);
+approved plugins are pinned by commit SHA and bumped automatically on push.
+
 ## No mirror required (install via README / direct tap)
 
 | Channel | How | Status |
