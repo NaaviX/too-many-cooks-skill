@@ -1,2 +1,4 @@
 dist
 node_modules
+.omc
+.claude/settings.local.json
