@@ -18,6 +18,9 @@ looks like `tmc_live_…`. Every config below references it as `TMC_API_KEY`.
 
 ## 1. Pick your platform
 
+> **Full step‑by‑step install for every platform: [INSTALL.md](./INSTALL.md).**
+> The table below is the quick map.
+
 All generated artifacts live under `dist/` (run `npm run build`). Each platform's
 config uses the **same** MCP server launched via `npx`, so nothing to install
 globally.
