@@ -55,10 +55,10 @@ each platform's output as `mcp-snippet.json`.
 The plugin output (`dist/claude-code-plugin/`) is also a self-contained plugin
 **marketplace** — it carries `.claude-plugin/marketplace.json` alongside
 `.claude-plugin/plugin.json`. Once that tree is pushed to a git host (CI mirrors
-it to `toomanycooks/toomanycooks-claude-plugin` — see [MARKETPLACES.md](./MARKETPLACES.md)):
+it to `toomanycooks/toomanycooks-plugin` — see [MARKETPLACES.md](./MARKETPLACES.md)):
 
 ```text
-/plugin marketplace add toomanycooks/toomanycooks-claude-plugin
+/plugin marketplace add toomanycooks/toomanycooks-plugin
 /plugin install toomanycooks@toomanycooks
 ```
 

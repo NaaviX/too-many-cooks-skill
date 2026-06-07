@@ -7,7 +7,7 @@ a submission is filed or accepted. Versions come from `canonical/_frontmatter.ym
 
 | Marketplace | Mirror repo | Source `dist/` | Status |
 |---|---|---|---|
-| Claude Plugin Marketplace (`platform.claude.com/plugins/submit`) | `toomanycooks/toomanycooks-claude-plugin` | `dist/claude-code-plugin/` | ☐ not submitted |
+| Claude Plugin Marketplace (`platform.claude.com/plugins/submit`) | `toomanycooks/toomanycooks-plugin` | `dist/claude-code-plugin/` | ☐ not submitted |
 | Cursor Directory (`cursor.directory`, PR) | `toomanycooks/toomanycooks-cursor` | `dist/cursor/` | ☐ not submitted |
 
 The mirror repos are fed automatically by `.github/workflows/mirror.yml` on every
@@ -20,7 +20,7 @@ to `.claude-plugin/plugin.json` (the plugin, `source: "."`). So before any
 official submission, anyone can already install it directly:
 
 ```text
-/plugin marketplace add toomanycooks/toomanycooks-claude-plugin
+/plugin marketplace add toomanycooks/toomanycooks-plugin
 /plugin install toomanycooks@toomanycooks
 ```
 
@@ -42,6 +42,6 @@ approved plugins are pinned by commit SHA and bumped automatically on push.
 
 ## CI setup (one-time)
 
-1. Create `toomanycooks/toomanycooks-claude-plugin` and `toomanycooks/toomanycooks-cursor` (empty).
+1. Create `toomanycooks/toomanycooks-plugin` and `toomanycooks/toomanycooks-cursor` (empty).
 2. Create a PAT with `repo` scope; add it as the `MIRROR_PUSH_TOKEN` secret on this repo.
 3. Push to `main` → `mirror.yml` populates both. Verify their contents, then submit.

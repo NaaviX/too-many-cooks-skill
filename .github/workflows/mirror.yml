@@ -19,7 +19,7 @@ jobs:
       matrix:
         include:
           - platform: claude-code-plugin
-            repo: toomanycooks/toomanycooks-claude-plugin
+            repo: toomanycooks/toomanycooks-plugin
           - platform: cursor
             repo: toomanycooks/toomanycooks-cursor
     steps:
