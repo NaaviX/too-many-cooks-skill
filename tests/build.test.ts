@@ -34,7 +34,7 @@ describe("multi-platform build", () => {
 		);
 		const manifest = JSON.parse(raw);
 		expect(manifest.name).toBe("toomanycooks");
-		expect(manifest.version).toBe("1.0.0");
+		expect(manifest.version).toBe("1.1.0");
 		expect(manifest.mcpServers.toomanycooks.command).toBe("npx");
 	});
 
@@ -59,7 +59,7 @@ describe("multi-platform build", () => {
 			path.join(root, "dist/openclaw/skills/toomanycooks/SKILL.md"),
 			"utf8",
 		);
-		expect(out).toContain("version: 1.0.0");
+		expect(out).toContain("version: 1.1.0");
 		expect(out).not.toContain("$version");
 	});
 });
