@@ -7,12 +7,30 @@ a submission is filed or accepted. Versions come from `canonical/_frontmatter.ym
 
 | Marketplace | Mirror repo | Source `dist/` | Status |
 |---|---|---|---|
-| Claude Plugin Marketplace (`platform.claude.com/plugins/submit`) | `naavix/toomanycooks-plugin` | `dist/claude-code-plugin/` | ☐ not submitted |
-| Cursor Directory (`cursor.directory`, PR) | `naavix/toomanycooks-cursor` | `dist/cursor/` | ☐ not submitted |
+| Claude Plugin Marketplace (`claude.ai/settings/plugins/submit`) | `naavix/toomanycooks-plugin` | `dist/claude-code-plugin/` | ☐ mirror live @ 1.2.0 — submit via form |
+| Cursor Directory (`cursor.directory`, "Submit" form) | `naavix/toomanycooks-cursor` | `dist/cursor/` | ☐ mirror live @ 1.2.0 — submit via form |
 
-The mirror repos are fed automatically by `.github/workflows/mirror.yml` on every
-push to `main` (needs the `MIRROR_PUSH_TOKEN` secret). Create the two repos once,
-then submit each marketplace pointing at its mirror.
+Both mirror repos are **live and auto-fed** by `.github/workflows/mirror.yml` on
+every push to `main` (needs the `MIRROR_PUSH_TOKEN` secret; the source repo must
+be the GitHub-hosted `naavix/too-many-cooks-skill`, since the GitLab origin does
+not run GitHub Actions). Each marketplace is submitted via its **website form**
+(not a PR), pointing at the relevant mirror.
+
+### Submission payloads (prepared 2026-06-07)
+
+**Claude community marketplace** — form at `claude.ai/settings/plugins/submit`
+(aka `platform.claude.com/plugins/submit` / `clau.de/plugin-directory-submission`).
+Point it at marketplace repo **`naavix/toomanycooks-plugin`**; it reads
+`.claude-plugin/marketplace.json` → plugin `toomanycooks` @ `1.2.0`. Anthropic
+runs an automated security scan + review; approved plugins are pinned by SHA and
+auto-bumped on push.
+
+**Cursor Directory** — "Submit" form at `cursor.directory`:
+- Name: **Too Many Cooks**
+- One-line: *Crypto perpetuals funding rates + delta-neutral arbitrage across 25 DEX exchanges via the Too Many Cooks MCP server.*
+- Tools: **21** · Transport: **stdio** · Auth: **API key** (`TMC_API_KEY`, env)
+- Repo: `https://www.npmjs.com/package/@toomanycooks/mcp-server` · Homepage: `https://toomanycooks.app`
+- Config snippet: `naavix/toomanycooks-cursor` → `mcp-snippet.json`
 
 The `claude-code-plugin` mirror is a **working plugin marketplace** on its own:
 `dist/claude-code-plugin/` ships `.claude-plugin/marketplace.json` (catalog) next
@@ -40,8 +58,12 @@ approved plugins are pinned by commit SHA and bumped automatically on push.
 | Hermes — `NousResearch/hermes-agent` PR under `optional-skills/` | Direct PR for official visibility | ☐ not submitted |
 | Cline / Continue.dev / Codex / OpenClaw | README copy-paste install | n/a (docs only) |
 
-## CI setup (one-time)
+## CI setup (one-time) — ✅ done 2026-06-07
 
-1. Create `naavix/toomanycooks-plugin` and `naavix/toomanycooks-cursor` (empty).
-2. Create a PAT with `repo` scope; add it as the `MIRROR_PUSH_TOKEN` secret on this repo.
-3. Push to `main` → `mirror.yml` populates both. Verify their contents, then submit.
+1. ✅ Created `naavix/toomanycooks-plugin` and `naavix/toomanycooks-cursor`.
+2. ✅ PAT created; added as the `MIRROR_PUSH_TOKEN` secret on `naavix/too-many-cooks-skill`.
+3. ✅ Push to `main` → `mirror.yml` populates both. Both verified live @ 1.2.0.
+
+Note: the GitHub Actions workflows only run on the GitHub-hosted
+`naavix/too-many-cooks-skill` repo, not the GitLab origin. Keep that repo in sync
+(push-mirror or a second remote) for CI to fire.
