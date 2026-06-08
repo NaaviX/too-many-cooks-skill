@@ -1,0 +1,15 @@
+{
+	"outputPath": "dist/copilot/.github/copilot-instructions.md",
+	"blocks": [
+		"decision-tree",
+		"tool-reference",
+		"domain-knowledge",
+		"caveats",
+		"output-formatting",
+		"failure-modes",
+		"examples"
+	],
+	"transforms": [{ "kind": "wrap-section", "title": "Too Many Cooks" }],
+	"extrasDir": "dist/copilot",
+	"extras": [{ "kind": "mcp-snippet", "format": "json" }]
+}

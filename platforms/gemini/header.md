@@ -1,0 +1,1 @@
+Gemini CLI context file. Activates for funding-rate / delta-neutral arbitrage / perp-spread queries. Requires the `@toomanycooks/mcp-server` MCP server (config in the accompanying `mcp-snippet.json`; register it under `mcpServers` in `.gemini/settings.json`).

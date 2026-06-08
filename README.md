@@ -32,8 +32,9 @@ globally.
 | **Cursor** | `dist/cursor/.cursor/rules/toomanycooks.mdc` → project `.cursor/rules/` | `dist/cursor/mcp-snippet.json` → `~/.cursor/mcp.json` |
 | **Cline** | `dist/cline/.clinerules/toomanycooks.md` → project `.clinerules/` | `dist/cline/mcp-snippet.json` → Cline MCP settings |
 | **Continue.dev** | `dist/continue/.continue/rules/toomanycooks.md` → project `.continue/rules/` | `dist/continue/mcp-snippet.json` → Continue MCP config |
-| **Codex CLI** | paste `dist/codex/AGENTS.snippet.md` into your `AGENTS.md` | `dist/codex/mcp-snippet.json` → `~/.codex/` |
-| **Hermes** | paste `dist/hermes/system-prompt.md` into the system prompt | `dist/hermes/mcp-snippet.json` |
+| **Codex CLI** | paste `dist/codex/AGENTS.snippet.md` into your `AGENTS.md` | `dist/codex/mcp-snippet.json` → `~/.codex/config.toml` |
+| **Codex** (plugin) | `dist/codex-plugin/` (bundles skill + MCP config) | `dist/codex-plugin/.mcp.json` reads `TMC_API_KEY` from the Codex environment |
+| **Hermes** | `dist/hermes/skills/toomanycooks/SKILL.md` or `dist/hermes/system-prompt.md` fallback | `dist/hermes/mcp-snippet.json` |
 | **OpenClaw** | `dist/openclaw/skills/toomanycooks/SKILL.md` | `dist/openclaw/skills/toomanycooks/mcp-snippet.json` |
 
 ### The MCP server config (Claude Desktop / Claude Code shape)
@@ -50,8 +51,15 @@ globally.
 }
 ```
 
-Codex uses the same fields under a `servers` key; the exact snippet ships next to
-each platform's output as `mcp-snippet.json`.
+Codex stores MCP servers in `~/.codex/config.toml`; the exact command/args/env
+object still ships next to each platform's output as `mcp-snippet.json`.
+
+### Codex plugin
+
+The plugin output (`dist/codex-plugin/`) is a Codex plugin tree with
+`.codex-plugin/plugin.json`, `.mcp.json`, and `skills/toomanycooks/SKILL.md`.
+Install it through a local/personal Codex marketplace, with `TMC_API_KEY`
+available in the environment that launches Codex.
 
 ### Claude Code plugin (one-line install)
 
@@ -72,6 +80,25 @@ config. To test the local build before publishing:
 ```bash
 claude --plugin-dir ./dist/claude-code-plugin
 ```
+
+### Hermes skill and discovery
+
+Hermes gets both install styles:
+
+- Local/tap install artifact: `dist/hermes/skills/toomanycooks/SKILL.md`
+- Paste fallback: `dist/hermes/system-prompt.md`
+- Well-known hosting tree: `dist/hermes/.well-known/agent-skills/` plus legacy
+  `dist/hermes/.well-known/skills/index.json`
+
+To publish for Hermes users, run:
+
+```bash
+hermes skills publish dist/hermes/skills/toomanycooks --to github --repo naavix/toomanycooks-hermes-skills
+```
+
+To self-host discovery, serve `dist/hermes/.well-known/` from
+`https://toomanycooks.app/.well-known/`. The generated Agent Skills index
+includes a SHA-256 digest of the generated `SKILL.md`.
 
 ## 2. What you can now ask
 
@@ -130,7 +157,7 @@ A ~150-line build assembles every platform output.
 
 ```bash
 npm install
-npm run build     # regenerate dist/ for all 8 platforms
+npm run build     # regenerate dist/ for all 9 platforms
 npm test          # vitest — snapshot per platform + unit tests
 npm run check     # Biome lint + format
 ```

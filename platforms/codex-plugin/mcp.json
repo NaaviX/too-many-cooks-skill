@@ -1,0 +1,11 @@
+{
+	"mcpServers": {
+		"toomanycooks": {
+			"command": "npx",
+			"args": ["-y", "@toomanycooks/mcp-server"],
+			"env": {
+				"TMC_API_KEY": "${TMC_API_KEY}"
+			}
+		}
+	}
+}

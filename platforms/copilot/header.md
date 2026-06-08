@@ -1,0 +1,1 @@
+GitHub Copilot repository instructions. Activates for funding-rate / delta-neutral arbitrage / perp-spread queries. Requires the `@toomanycooks/mcp-server` MCP server (config in the accompanying `mcp-snippet.json`; wire it via `.vscode/mcp.json` or your Copilot MCP settings).

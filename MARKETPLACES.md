@@ -28,7 +28,7 @@ auto-bumped on push.
 **Cursor Directory** — "Submit" form at `cursor.directory`:
 - Name: **Too Many Cooks**
 - One-line: *Crypto perpetuals funding rates + delta-neutral arbitrage across 25 DEX exchanges via the Too Many Cooks MCP server.*
-- Tools: **21** · Transport: **stdio** · Auth: **API key** (`TMC_API_KEY`, env)
+- Tools: **22** · Transport: **stdio** · Auth: **API key** (`TMC_API_KEY`, env)
 - Repo: `https://www.npmjs.com/package/@toomanycooks/mcp-server` · Homepage: `https://toomanycooks.app`
 - Config snippet: `naavix/toomanycooks-cursor` → `mcp-snippet.json`
 
@@ -53,10 +53,13 @@ approved plugins are pinned by commit SHA and bumped automatically on push.
 | Channel | How | Status |
 |---|---|---|
 | Aggregator (lobehub.com **or** skillsmp.com) | One listing, links back to this repo | ☐ not submitted |
-| Hermes — `skills.sh` | Publish the skill listing | ☐ not submitted |
-| Hermes — `/.well-known/skills/index.json` self-host on toomanycooks.app | Serve the index, Hermes auto-indexes | ☐ not submitted |
+| Hermes — Skills Hub / tap repo | `hermes skills publish dist/hermes/skills/toomanycooks --to github --repo naavix/toomanycooks-hermes-skills` | ☐ not published |
+| Hermes / Agent Skills well-known | Serve `dist/hermes/.well-known/agent-skills/` from `toomanycooks.app` | ☐ not deployed |
+| Legacy skills well-known | Serve `dist/hermes/.well-known/skills/index.json` for older installers | ☐ not deployed |
+| `skills.sh` | List the GitHub skill repo once published | ☐ not submitted |
 | Hermes — `NousResearch/hermes-agent` PR under `optional-skills/` | Direct PR for official visibility | ☐ not submitted |
-| Cline / Continue.dev / Codex / OpenClaw | README copy-paste install | n/a (docs only) |
+| Cline / Continue.dev / Codex CLI / OpenClaw | README copy-paste install | n/a (docs only) |
+| Codex plugin | `dist/codex-plugin/` via personal Codex marketplace | local install ready |
 
 ## CI setup (one-time) — ✅ done 2026-06-07
 

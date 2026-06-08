@@ -10,5 +10,66 @@
 		"examples"
 	],
 	"transforms": [{ "kind": "wrap-section", "title": "Too Many Cooks (funding rates + arb)" }],
-	"extras": [{ "kind": "mcp-snippet", "format": "json" }]
+	"additionalOutputs": [
+		{
+			"outputPath": "dist/hermes/skills/toomanycooks/SKILL.md",
+			"transforms": [{ "kind": "wrap-section", "title": "Too Many Cooks (funding rates + arb)" }],
+			"frontmatter": {
+				"name": "toomanycooks",
+				"description": "Use when the user asks about crypto perpetuals funding rates, delta-neutral arbitrage, perp/perp spreads, exchange support, or live Too Many Cooks market data via MCP.",
+				"version": "$version",
+				"author": "toomanycooks.app",
+				"license": "MIT",
+				"metadata": {
+					"hermes": {
+						"tags": ["Finance", "Crypto", "MCP", "Arbitrage", "Funding Rates"]
+					}
+				},
+				"required_environment_variables": [
+					{
+						"name": "TMC_API_KEY",
+						"prompt": "Too Many Cooks API key",
+						"help": "Get a free API key at https://toomanycooks.app/dashboard/api-keys",
+						"required_for": "Too Many Cooks MCP server/API access"
+					}
+				]
+			}
+		},
+		{
+			"outputPath": "dist/hermes/.well-known/agent-skills/toomanycooks/SKILL.md",
+			"transforms": [{ "kind": "wrap-section", "title": "Too Many Cooks (funding rates + arb)" }],
+			"frontmatter": {
+				"name": "toomanycooks",
+				"description": "Use when the user asks about crypto perpetuals funding rates, delta-neutral arbitrage, perp/perp spreads, exchange support, or live Too Many Cooks market data via MCP.",
+				"version": "$version",
+				"author": "toomanycooks.app",
+				"license": "MIT",
+				"metadata": {
+					"hermes": {
+						"tags": ["Finance", "Crypto", "MCP", "Arbitrage", "Funding Rates"]
+					}
+				},
+				"required_environment_variables": [
+					{
+						"name": "TMC_API_KEY",
+						"prompt": "Too Many Cooks API key",
+						"help": "Get a free API key at https://toomanycooks.app/dashboard/api-keys",
+						"required_for": "Too Many Cooks MCP server/API access"
+					}
+				]
+			}
+		}
+	],
+	"extrasDir": "dist/hermes",
+	"extras": [
+		{ "kind": "mcp-snippet", "format": "json" },
+		{
+			"kind": "agent-skills-index",
+			"source": ".well-known/agent-skills/toomanycooks/SKILL.md",
+			"name": "toomanycooks",
+			"description": "Use when the user asks about crypto perpetuals funding rates, delta-neutral arbitrage, perp/perp spreads, exchange support, or live Too Many Cooks market data via MCP.",
+			"url": "/.well-known/agent-skills/toomanycooks/SKILL.md",
+			"legacyOutputPath": ".well-known/skills/index.json"
+		}
+	]
 }

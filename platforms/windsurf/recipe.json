@@ -1,0 +1,18 @@
+{
+	"outputPath": "dist/windsurf/.windsurf/rules/toomanycooks.md",
+	"blocks": [
+		"decision-tree",
+		"tool-reference",
+		"domain-knowledge",
+		"caveats",
+		"output-formatting",
+		"failure-modes",
+		"examples"
+	],
+	"frontmatter": {
+		"trigger": "model_decision",
+		"description": "Crypto perpetuals funding rates + delta-neutral arbitrage across 25 DEX exchanges via the Too Many Cooks MCP server."
+	},
+	"extrasDir": "dist/windsurf",
+	"extras": [{ "kind": "mcp-snippet", "format": "json" }]
+}

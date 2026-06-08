@@ -22,6 +22,25 @@ function substituteVersion(
 	return out;
 }
 
+function renderBody(
+	baseBody: string,
+	options: {
+		frontmatter?: Record<string, unknown>;
+		transforms?: Recipe["transforms"];
+	},
+	version: unknown,
+): string {
+	let body = baseBody;
+	if (options.transforms) {
+		body = applyTransforms(body, options.transforms);
+	}
+	if (options.frontmatter) {
+		const resolved = substituteVersion(options.frontmatter, version);
+		body = injectFrontmatter(body, resolved);
+	}
+	return body;
+}
+
 export async function buildPlatform(name: string, ctx: BuildContext): Promise<void> {
 	const platformDir = path.join(ctx.rootDir, "platforms", name);
 	const canonicalDir = path.join(ctx.rootDir, "canonical");
@@ -44,20 +63,21 @@ export async function buildPlatform(name: string, ctx: BuildContext): Promise<vo
 	);
 
 	const segments = [header, ...blocks].map((s) => s.trim()).filter((s) => s.length > 0);
-	let body = segments.join("\n\n");
-
-	if (recipe.transforms) {
-		body = applyTransforms(body, recipe.transforms);
-	}
-
-	if (recipe.frontmatter) {
-		const resolved = substituteVersion(recipe.frontmatter, baseFrontmatter.version);
-		body = injectFrontmatter(body, resolved);
-	}
+	const baseBody = segments.join("\n\n");
+	const body = renderBody(baseBody, recipe, baseFrontmatter.version);
 
 	const outputPath = path.join(ctx.rootDir, recipe.outputPath);
 	await fs.mkdir(path.dirname(outputPath), { recursive: true });
 	await fs.writeFile(outputPath, `${body}\n`);
+
+	if (recipe.additionalOutputs) {
+		for (const output of recipe.additionalOutputs) {
+			const additionalBody = renderBody(baseBody, output, baseFrontmatter.version);
+			const additionalPath = path.join(ctx.rootDir, output.outputPath);
+			await fs.mkdir(path.dirname(additionalPath), { recursive: true });
+			await fs.writeFile(additionalPath, `${additionalBody}\n`);
+		}
+	}
 
 	if (recipe.extras) {
 		const outputDir = recipe.extrasDir

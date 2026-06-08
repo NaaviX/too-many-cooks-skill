@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import yaml from "js-yaml";
@@ -32,12 +33,67 @@ export async function renderExtra(extra: Extra, ctx: ExtrasContext): Promise<voi
 			await fs.writeFile(outPath, `${renderMcpSnippet(snippet, extra.format)}\n`);
 			return;
 		}
+		case "agent-skills-index": {
+			const sourcePath = path.join(ctx.outputDir, extra.source);
+			const source = await fs.readFile(sourcePath);
+			const digest = `sha256:${createHash("sha256").update(source).digest("hex")}`;
+			const skill = {
+				name: extra.name,
+				type: "skill-md",
+				description: extra.description,
+				url: extra.url,
+				digest,
+			};
+			const index = {
+				$schema: "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+				skills: [skill],
+			};
+			const outPath = path.join(
+				ctx.outputDir,
+				extra.outputPath ?? ".well-known/agent-skills/index.json",
+			);
+			await fs.mkdir(path.dirname(outPath), { recursive: true });
+			await fs.writeFile(outPath, `${JSON.stringify(index, null, 2)}\n`);
+			if (extra.legacyOutputPath) {
+				const legacy = {
+					skills: [
+						{
+							name: extra.name,
+							description: extra.description,
+							files: [extra.url],
+						},
+					],
+				};
+				const legacyPath = path.join(ctx.outputDir, extra.legacyOutputPath);
+				await fs.mkdir(path.dirname(legacyPath), { recursive: true });
+				await fs.writeFile(legacyPath, `${JSON.stringify(legacy, null, 2)}\n`);
+			}
+			return;
+		}
 		case "plugin-manifest": {
 			const manifestRaw = await fs.readFile(path.join(ctx.platformDir, extra.source), "utf8");
 			const manifest = JSON.parse(manifestRaw) as Record<string, unknown>;
 			manifest.version = ctx.frontmatter.version;
 			manifest.name = manifest.name ?? ctx.frontmatter.name;
 			const outPath = path.join(ctx.outputDir, ".claude-plugin/plugin.json");
+			await fs.mkdir(path.dirname(outPath), { recursive: true });
+			await fs.writeFile(outPath, `${JSON.stringify(manifest, null, 2)}\n`);
+			return;
+		}
+		case "codex-plugin-manifest": {
+			const manifestRaw = await fs.readFile(path.join(ctx.platformDir, extra.source), "utf8");
+			const manifest = JSON.parse(manifestRaw) as Record<string, unknown>;
+			manifest.version = ctx.frontmatter.version;
+			manifest.name = manifest.name ?? ctx.frontmatter.name;
+			const outPath = path.join(ctx.outputDir, ".codex-plugin/plugin.json");
+			await fs.mkdir(path.dirname(outPath), { recursive: true });
+			await fs.writeFile(outPath, `${JSON.stringify(manifest, null, 2)}\n`);
+			return;
+		}
+		case "codex-mcp-manifest": {
+			const raw = await fs.readFile(path.join(ctx.platformDir, extra.source), "utf8");
+			const manifest = JSON.parse(raw) as Record<string, unknown>;
+			const outPath = path.join(ctx.outputDir, ".mcp.json");
 			await fs.mkdir(path.dirname(outPath), { recursive: true });
 			await fs.writeFile(outPath, `${JSON.stringify(manifest, null, 2)}\n`);
 			return;

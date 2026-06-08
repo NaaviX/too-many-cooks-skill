@@ -1,0 +1,26 @@
+{
+	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Edit|Write|MultiEdit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "file=$(jq -r '.tool_input.file_path // empty'); case \"$file\" in */dist/*|dist/*) echo 'dist/ is generated output — do not hand-edit it. Change canonical/<block>.md or platforms/<name>/recipe.json, then run: npm run build' >&2; exit 2;; *) exit 0;; esac"
+					}
+				]
+			}
+		],
+		"PostToolUse": [
+			{
+				"matcher": "Edit|Write|MultiEdit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "file=$(jq -r '.tool_input.file_path // empty'); case \"$file\" in *canonical/*|*platforms/*) npm run build >/dev/null 2>&1 && echo 'Rebuilt dist/ from canonical/recipes. Snapshots are now stale — run: npm test -- -u to re-bless before committing.' >&2; exit 2;; *) exit 0;; esac"
+					}
+				]
+			}
+		]
+	}
+}

@@ -201,12 +201,32 @@ Use this if you want the know‑how without the plugin's slash commands.
 
 ## Hermes
 
-1. **Know‑how** — paste `dist/hermes/system-prompt.md` into your agent's system
-   prompt.
+1. **Skill** — copy the generated skill into your Hermes skills folder:
+
+   ```bash
+   mkdir -p ~/.hermes/skills/finance
+   cp -r dist/hermes/skills/toomanycooks ~/.hermes/skills/finance/
+   ```
+
+   Hermes reads the `required_environment_variables` block in `SKILL.md` and
+   prompts securely for `TMC_API_KEY` when needed. If you are wiring a hosted
+   Hermes agent that only accepts prompt text, paste `dist/hermes/system-prompt.md`
+   as a fallback.
 
 2. **MCP server** — register the server with your Hermes runtime using the fields
    from `dist/hermes/mcp-snippet.json` (the standard `command` / `args` / `env`
    object).
+
+3. **Share it** — publish the generated skill to a Hermes tap / Skills Hub repo:
+
+   ```bash
+   hermes skills publish dist/hermes/skills/toomanycooks --to github --repo naavix/toomanycooks-hermes-skills
+   ```
+
+   Or self-host discovery by serving `dist/hermes/.well-known/` from
+   `https://toomanycooks.app/.well-known/`. The generated
+   `agent-skills/index.json` includes the required SHA-256 digest, and the legacy
+   `skills/index.json` is emitted for older installers.
 
 ---
 

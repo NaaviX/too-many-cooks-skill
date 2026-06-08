@@ -42,11 +42,26 @@ describe("RecipeSchema", () => {
 		const parsed = RecipeSchema.parse({
 			outputPath: "dist/plugin/SKILL.md",
 			blocks: ["tool-reference"],
+			additionalOutputs: [
+				{
+					outputPath: "dist/plugin/.well-known/agent-skills/foo/SKILL.md",
+					frontmatter: { name: "foo", version: "$version" },
+					transforms: [{ kind: "wrap-section", title: "Foo" }],
+				},
+			],
 			extras: [
 				{ kind: "plugin-manifest", source: "plugin.manifest.json" },
 				{ kind: "mcp-snippet", format: "json" },
+				{
+					kind: "agent-skills-index",
+					source: ".well-known/agent-skills/foo/SKILL.md",
+					name: "foo",
+					description: "Foo skill.",
+					url: "/.well-known/agent-skills/foo/SKILL.md",
+				},
 			],
 		});
-		expect(parsed.extras).toHaveLength(2);
+		expect(parsed.additionalOutputs).toHaveLength(1);
+		expect(parsed.extras).toHaveLength(3);
 	});
 });

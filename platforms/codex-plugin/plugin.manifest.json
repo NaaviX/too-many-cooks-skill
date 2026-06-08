@@ -1,0 +1,23 @@
+{
+	"name": "toomanycooks",
+	"description": "Crypto perpetuals funding rates and delta-neutral arbitrage data via the Too Many Cooks MCP server.",
+	"author": {
+		"name": "toomanycooks.app",
+		"url": "https://toomanycooks.app"
+	},
+	"homepage": "https://toomanycooks.app",
+	"license": "MIT",
+	"keywords": ["crypto", "funding-rates", "arbitrage", "data", "mcp"],
+	"skills": "./skills/",
+	"mcpServers": "./.mcp.json",
+	"interface": {
+		"displayName": "Too Many Cooks",
+		"shortDescription": "Funding rates and arbitrage data for crypto perps.",
+		"longDescription": "Query live and historical funding rates, market snapshots, execution costs, API plans, and delta-neutral arbitrage opportunities across supported perpetual exchanges.",
+		"developerName": "toomanycooks.app",
+		"category": "Finance",
+		"capabilities": ["Data", "MCP", "Finance"],
+		"websiteURL": "https://toomanycooks.app",
+		"defaultPrompt": "Show me the top delta-neutral arbitrage opportunities right now."
+	}
+}

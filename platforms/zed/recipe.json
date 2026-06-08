@@ -1,0 +1,15 @@
+{
+	"outputPath": "dist/zed/.rules",
+	"blocks": [
+		"decision-tree",
+		"tool-reference",
+		"domain-knowledge",
+		"caveats",
+		"output-formatting",
+		"failure-modes",
+		"examples"
+	],
+	"transforms": [{ "kind": "wrap-section", "title": "Too Many Cooks" }],
+	"extrasDir": "dist/zed",
+	"extras": [{ "kind": "mcp-snippet", "format": "json" }]
+}
