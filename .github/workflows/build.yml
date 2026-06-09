@@ -16,6 +16,16 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run build
+      # The agent-skills platform writes tracked artifacts at the repo root
+      # (skills/toomanycooks/SKILL.md + mcp-snippet.json) so `npx skills add` can
+      # read them from the source repo. Fail if a canonical/ edit was committed
+      # without re-running `npm run build` — i.e. the committed copies are stale.
+      - name: Check committed agent-skills artifacts are in sync
+        run: |
+          git diff --exit-code -- skills/ mcp-snippet.json || {
+            echo "::error::skills/ or mcp-snippet.json is stale. Run 'npm run build' and commit the result."
+            exit 1
+          }
       - run: npm test
       # Validate the generated Claude Code plugin against the real schema. This is
       # the gate that catches a broken plugin layout (manifest/commands/MCP in the

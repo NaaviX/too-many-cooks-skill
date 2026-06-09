@@ -80,8 +80,10 @@ To change the skill's knowledge (new MCP tool, pricing, caveat, example):
 `mcp-snippet.json`. These ARE committed (so `npx skills add github.com/naavix/too-many-cooks-skill`
 can read them straight from the source repo — there is **no mirror** for this platform). They are
 still generated: after any `canonical/` edit, `npm run build` rewrites them, so re-commit them with
-the snapshot re-bless. Never hand-edit `skills/toomanycooks/SKILL.md` — edit `canonical/` instead.
-(Root `SKILL.md` is the separate hand-maintained standalone copy; don't confuse the two.)
+the snapshot re-bless. CI enforces this — `build.yml` runs `npm run build` then
+`git diff --exit-code -- skills/ mcp-snippet.json`, so a `canonical/` edit committed without
+rebuilding these fails the build. Never hand-edit `skills/toomanycooks/SKILL.md` — edit `canonical/`
+instead. (Root `SKILL.md` is the separate hand-maintained standalone copy; don't confuse the two.)
 
 To add a platform: create `platforms/<name>/recipe.json` (+ optional `header.md`); `build.ts`
 auto-discovers any directory under `platforms/` not starting with `_`. Add it to `PLATFORM_OUTPUTS`
