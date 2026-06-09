@@ -14,14 +14,14 @@ on:
 jobs:
   mirror:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'naavix'
+    if: github.repository_owner == 'NaaviX'
     strategy:
       matrix:
         include:
           - platform: claude-code-plugin
-            repo: naavix/toomanycooks-plugin
+            repo: NaaviX/toomanycooks-plugin
           - platform: cursor
-            repo: naavix/toomanycooks-cursor
+            repo: NaaviX/toomanycooks-cursor
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

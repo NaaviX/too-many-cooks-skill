@@ -48,7 +48,7 @@ Three steps: **get a key → pick your platform → add the MCP server.**
 > ⭐ **Recommended.** One install bundles the skill, the MCP server, and four slash commands — no MCP config to hand-edit (skip step 3).
 
 ```text
-/plugin marketplace add naavix/toomanycooks-plugin
+/plugin marketplace add NaaviX/toomanycooks-plugin
 /plugin install toomanycooks@toomanycooks
 ```
 
@@ -90,8 +90,8 @@ Hermes reads the `required_environment_variables` block in `SKILL.md` and prompt
 Cline, Continue, Windsurf, Roo, Zed, Gemini, Junie, OpenClaw, Claude Code and ~60 more are supported targets of the [`skills`](https://github.com/vercel-labs/skills) CLI. It pulls the skill straight from this repo — no clone, no build:
 
 ```bash
-npx skills add github.com/naavix/too-many-cooks-skill
-# pick specific agents:  npx skills add github.com/naavix/too-many-cooks-skill -a cline -a windsurf
+npx skills add github.com/NaaviX/too-many-cooks-skill
+# pick specific agents:  npx skills add github.com/NaaviX/too-many-cooks-skill -a cline -a windsurf
 ```
 
 This installs the **know-how only** — finish with step 3.

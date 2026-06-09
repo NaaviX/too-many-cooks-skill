@@ -82,7 +82,7 @@ To change the skill's knowledge (new MCP tool, pricing, caveat, example):
 
 **One documented exception to "never commit generated":** the `agent-skills` platform writes
 **outside** `dist/` to the *tracked* repo root — `skills/toomanycooks/SKILL.md` and
-`mcp-snippet.json`. These ARE committed (so `npx skills add github.com/naavix/too-many-cooks-skill`
+`mcp-snippet.json`. These ARE committed (so `npx skills add github.com/NaaviX/too-many-cooks-skill`
 can read them straight from the source repo — there is **no mirror** for this platform). They are
 still generated: after any `canonical/` edit, `npm run build` rewrites them, so re-commit them with
 the snapshot re-bless. CI enforces this — `build.yml` runs `npm run build` then
