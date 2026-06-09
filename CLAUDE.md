@@ -75,6 +75,14 @@ To change the skill's knowledge (new MCP tool, pricing, caveat, example):
 5. Commit. Do **not** commit `dist/` (gitignored) or hand-edit generated files; fix the canonical
    source or the recipe instead.
 
+**One documented exception to "never commit generated":** the `agent-skills` platform writes
+**outside** `dist/` to the *tracked* repo root — `skills/toomanycooks/SKILL.md` and
+`mcp-snippet.json`. These ARE committed (so `npx skills add github.com/naavix/too-many-cooks-skill`
+can read them straight from the source repo — there is **no mirror** for this platform). They are
+still generated: after any `canonical/` edit, `npm run build` rewrites them, so re-commit them with
+the snapshot re-bless. Never hand-edit `skills/toomanycooks/SKILL.md` — edit `canonical/` instead.
+(Root `SKILL.md` is the separate hand-maintained standalone copy; don't confuse the two.)
+
 To add a platform: create `platforms/<name>/recipe.json` (+ optional `header.md`); `build.ts`
 auto-discovers any directory under `platforms/` not starting with `_`. Add it to `PLATFORM_OUTPUTS`
 in `tests/build.test.ts` so it gets snapshot coverage.

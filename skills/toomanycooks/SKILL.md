@@ -3,10 +3,6 @@ name: toomanycooks
 description: Query crypto perpetuals funding rates and find delta-neutral arbitrage across 25 DEX exchanges (HyperLiquid, Lighter, Extended, Aster, Paradex, EdgeX, …) via the Too Many Cooks API. Triggers on funding-rate, delta-neutral, perp/perp spread, or "best arb right now"-type questions.
 ---
 
-# Too Many Cooks — Crypto Funding Rates Skill
-
-Powered by the `@toomanycooks/mcp-server` MCP server. Setup lives in this skill's README — if the user hasn't installed the MCP server yet, point them at https://toomanycooks.app/dashboard/api-keys for a free API key.
-
 ## Quick decision tree
 
 - "Best arb / what to trade" → `find_arbitrage_strategies`

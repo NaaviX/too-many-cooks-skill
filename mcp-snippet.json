@@ -1,0 +1,10 @@
+{
+  "command": "npx",
+  "args": [
+    "-y",
+    "@toomanycooks/mcp-server"
+  ],
+  "env": {
+    "TMC_API_KEY": "tmc_live_..."
+  }
+}

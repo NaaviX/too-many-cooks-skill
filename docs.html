@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Too Many Cooks — Skill Pipeline · Documentation</title>
+<style>
+  :root{
+    --bg:#0a0c10; --bg2:#0f1218; --panel:#13171f; --panel2:#171c26;
+    --line:#222936; --line2:#2c3545;
+    --ink:#e7ecf3; --mut:#94a0b2; --dim:#65718420;
+    --acc:#ff8a3d;       /* cook orange */
+    --acc2:#ffce47;      /* warm yellow */
+    --grn:#43d9a3; --blu:#5aa9ff; --pur:#b181ff; --red:#ff6b6b;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --r:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+  a{color:inherit;text-decoration:none}
+  code,.mono{font-family:var(--mono);font-size:.86em}
+  ::selection{background:var(--acc);color:#1a0e04}
+
+  /* layout */
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+  section{padding:64px 0;border-top:1px solid var(--line)}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--acc)}
+  h2{font-size:clamp(26px,3.4vw,38px);font-weight:760;letter-spacing:-.02em;line-height:1.12;margin-bottom:14px}
+  h3{font-size:18px;font-weight:680;letter-spacing:-.01em}
+  .lede{color:var(--mut);font-size:17px;max-width:680px;margin-bottom:36px}
+
+  /* hero */
+  header.hero{position:relative;overflow:hidden;border-top:none;
+    background:
+      radial-gradient(900px 480px at 78% -8%,#ff8a3d22,transparent 60%),
+      radial-gradient(700px 420px at 8% 12%,#5aa9ff14,transparent 55%);
+    padding:96px 0 80px}
+  .hero-grid{position:absolute;inset:0;opacity:.5;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:46px 46px;mask:radial-gradient(680px 380px at 70% 0%,#000,transparent 78%)}
+  .hero-in{position:relative}
+  .badge{display:inline-flex;align-items:center;gap:9px;background:var(--panel);
+    border:1px solid var(--line2);border-radius:100px;padding:6px 15px;font-size:13px;color:var(--mut);margin-bottom:26px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 0 4px #43d9a322}
+  h1{font-size:clamp(40px,6.6vw,76px);font-weight:800;letter-spacing:-.035em;line-height:.98}
+  h1 .g{background:linear-gradient(95deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.sub{font-size:20px;color:var(--mut);max-width:660px;margin:24px 0 36px}
+  .hero p.sub b{color:var(--ink);font-weight:620}
+  .cta{display:flex;gap:14px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:11px;font-weight:600;font-size:15px;
+    border:1px solid var(--line2);transition:.18s;background:var(--panel)}
+  .btn:hover{border-color:var(--acc);transform:translateY(-2px)}
+  .btn.p{background:linear-gradient(95deg,var(--acc),#ff7a26);border-color:transparent;color:#1a0e04}
+  .btn.p:hover{box-shadow:0 12px 34px -12px var(--acc)}
+  .stats{display:flex;gap:38px;flex-wrap:wrap;margin-top:54px}
+  .stat .n{font-size:34px;font-weight:780;letter-spacing:-.02em;font-family:var(--mono)}
+  .stat .n.o{color:var(--acc)} .stat .n.b{color:var(--blu)} .stat .n.g{color:var(--grn)} .stat .n.p{color:var(--pur)}
+  .stat .l{font-size:13px;color:var(--mut);margin-top:2px}
+
+  /* nav */
+  nav.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:#0a0c10cc;border-bottom:1px solid var(--line)}
+  nav.top .wrap{display:flex;align-items:center;gap:8px;height:56px}
+  nav .brand{font-weight:740;letter-spacing:-.01em;margin-right:auto;display:flex;align-items:center;gap:9px}
+  nav .brand .em{font-size:18px}
+  nav a.lnk{padding:7px 12px;border-radius:8px;font-size:14px;color:var(--mut);transition:.15s}
+  nav a.lnk:hover{color:var(--ink);background:var(--panel)}
+  @media(max-width:860px){nav a.lnk{display:none}}
+
+  /* cards */
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:880px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px;transition:.18s}
+  .card:hover{border-color:var(--line2);background:var(--panel2);transform:translateY(-2px)}
+  .card .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:19px;margin-bottom:14px;
+    background:var(--bg2);border:1px solid var(--line2)}
+  .card h3{margin-bottom:6px} .card p{color:var(--mut);font-size:14.5px}
+  .tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:6px;
+    background:var(--dim);border:1px solid var(--line2);color:var(--mut);margin-top:12px}
+
+  /* pipeline diagram */
+  .pipe{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:30px;overflow-x:auto}
+  .flow{display:flex;align-items:stretch;gap:0;min-width:760px}
+  .node{flex:1;background:var(--panel);border:1px solid var(--line2);border-radius:12px;padding:18px 16px;position:relative}
+  .node .k{font-family:var(--mono);font-size:11px;color:var(--acc);letter-spacing:.08em;text-transform:uppercase}
+  .node .t{font-weight:680;margin:7px 0 5px;font-size:15px}
+  .node .d{font-size:12.5px;color:var(--mut);line-height:1.45}
+  .arrow{display:grid;place-items:center;padding:0 10px;color:var(--acc);font-size:22px;flex:0 0 auto}
+  .node.src{border-color:#5aa9ff55} .node.eng{border-color:#ff8a3d77;background:#160f08}
+  .node.out{border-color:#43d9a355}
+
+  /* tool table groups */
+  .toolgrp{margin-bottom:18px}
+  .toolgrp .hd{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+  .toolgrp .hd .pill{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:7px;font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  .tbl-wrap{border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line)}
+  th{background:var(--bg2);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--panel)}
+  td code{color:var(--acc2);background:var(--dim);padding:1px 6px;border-radius:5px;white-space:nowrap}
+  .when{color:var(--mut)}
+  .danger code{color:var(--red)}
+
+  /* lists / decision tree */
+  .dtree{display:grid;gap:8px}
+  .dt{display:flex;gap:14px;align-items:baseline;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:12px 16px;font-size:14.5px}
+  .dt .q{color:var(--ink);font-weight:560;flex:1}
+  .dt .to{font-family:var(--mono);font-size:12.5px;color:var(--acc2);white-space:nowrap}
+  .dt::before{content:"→";color:var(--acc);font-weight:700}
+
+  /* steps */
+  .steps{counter-reset:s;display:grid;gap:14px}
+  .step{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 22px 18px 64px}
+  .step::before{counter-increment:s;content:counter(s);position:absolute;left:18px;top:16px;
+    width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-family:var(--mono);font-weight:700;
+    background:linear-gradient(95deg,var(--acc),#ff7a26);color:#1a0e04;font-size:15px}
+  .step h3{margin-bottom:4px} .step p{color:var(--mut);font-size:14px}
+
+  /* code blocks */
+  pre{background:#070a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow-x:auto;
+    font-family:var(--mono);font-size:13px;line-height:1.65;margin-top:12px}
+  pre .c{color:#5b6678} pre .s{color:var(--grn)} pre .k{color:var(--pur)} pre .v{color:var(--acc2)} pre .p{color:var(--blu)}
+
+  /* platform chips */
+  .plats{display:grid;gap:12px;grid-template-columns:repeat(3,1fr)}
+  @media(max-width:880px){.plats{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.plats{grid-template-columns:1fr}}
+  .plat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 17px;transition:.16s}
+  .plat:hover{border-color:var(--line2);transform:translateY(-2px)}
+  .plat .pn{display:flex;align-items:center;gap:9px;font-weight:660;font-size:15px}
+  .plat .pe{font-size:18px}
+  .plat .pp{font-family:var(--mono);font-size:11.5px;color:var(--mut);margin-top:9px;word-break:break-all;line-height:1.5}
+  .plat .chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+  .chip{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:5px;background:var(--dim);border:1px solid var(--line2);color:var(--mut)}
+  .chip.x{color:var(--acc);border-color:#ff8a3d44}
+
+  .note{display:flex;gap:12px;background:#160f08;border:1px solid #ff8a3d44;border-radius:11px;padding:15px 18px;font-size:14px;color:#f0d9c4}
+  .note .i{color:var(--acc);font-size:18px;flex:0 0 auto}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+
+  footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--mut);font-size:14px}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+  .kbd{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--line2);
+    border-bottom-width:2px;border-radius:6px;padding:2px 7px}
+</style>
+</head>
+<body>
+
+<nav class="top"><div class="wrap">
+  <span class="brand"><span class="em">🍳</span> Too Many Cooks <span class="mono" style="color:var(--mut);font-weight:400;font-size:12px">/skill</span></span>
+  <a class="lnk" href="#what">Concept</a>
+  <a class="lnk" href="#pipeline">Pipeline</a>
+  <a class="lnk" href="#tools">Tools MCP</a>
+  <a class="lnk" href="#blocks">Skill</a>
+  <a class="lnk" href="#commands">Commands</a>
+  <a class="lnk" href="#platforms">Plateformes</a>
+  <a class="lnk" href="#install">Installer</a>
+</div></nav>
+
+<header class="hero">
+  <div class="hero-grid"></div>
+  <div class="wrap hero-in">
+    <span class="badge"><span class="dot"></span> v1.2.0 · MIT · build pipeline markdown + TypeScript</span>
+    <h1>Un seul savoir-faire,<br><span class="g">15 plateformes</span> d'agents.</h1>
+    <p class="sub">Ce dépôt transforme <b>une skill canonique</b> — le savoir-faire pour interroger les <b>funding rates</b> de perpétuels crypto et trouver des arbitrages <b>delta-neutres</b> sur 25 DEX — en artefacts skill / rule / plugin pour chaque agent IA. Aucun code runtime : juste de la prose + des recettes JSON assemblées en <code>dist/</code>.</p>
+    <div class="cta">
+      <a class="btn p" href="#install">⚡ Installer en 3 étapes</a>
+      <a class="btn" href="#pipeline">Comprendre le pipeline</a>
+      <a class="btn" href="https://toomanycooks.app" target="_blank">toomanycooks.app ↗</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n o">15</div><div class="l">plateformes générées</div></div>
+      <div class="stat"><div class="n b">24</div><div class="l">outils MCP exposés</div></div>
+      <div class="stat"><div class="n g">9</div><div class="l">blocs canoniques</div></div>
+      <div class="stat"><div class="n p">3</div><div class="l">slash commands</div></div>
+      <div class="stat"><div class="n">25</div><div class="l">DEX couverts</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- WHAT -->
+<section id="what"><div class="wrap">
+  <div class="eyebrow">Le concept</div>
+  <h2>Deux pièces, jamais plus</h2>
+  <p class="lede">Chaque intégration combine toujours les deux mêmes morceaux. Ce dépôt ne produit que le second.</p>
+  <div class="two">
+    <div class="card" style="border-color:#5aa9ff44">
+      <div class="ic" style="color:var(--blu)">🔌</div>
+      <h3>1 · Le serveur MCP</h3>
+      <p>Le paquet npm <code>@toomanycooks/mcp-server</code> donne à l'agent les <b>outils</b> (<code>find_arbitrage_strategies</code>, <code>get_historical_funding</code>…). Il vit ailleurs ; ce dépôt ne le contient pas.</p>
+      <span class="tag">externe · lancé via npx</span>
+    </div>
+    <div class="card" style="border-color:#ff8a3d55">
+      <div class="ic" style="color:var(--acc)">🧠</div>
+      <h3>2 · La skill / rule <span style="color:var(--acc);font-size:13px">(ce dépôt)</span></h3>
+      <p>Donne à l'agent le <b>savoir-faire</b> : quel outil saisir, comment lire un APR, quels caveats remonter. Sans elle l'agent a les outils mais les appelle naïvement ; avec elle, il se comporte comme un analyste quant.</p>
+      <span class="tag">prose + recettes → dist/</span>
+    </div>
+  </div>
+</div></section>
+
+<!-- PIPELINE -->
+<section id="pipeline"><div class="wrap">
+  <div class="eyebrow">Architecture du build</div>
+  <h2>canonical/ + recipes → dist/</h2>
+  <p class="lede">La source de vérité unique : des blocs markdown partagés et une recette JSON par plateforme. <code>scripts/build.ts</code> (~150 lignes, lancé via <code>tsx</code>) assemble chaque sortie.</p>
+
+  <div class="pipe">
+    <div class="flow">
+      <div class="node src">
+        <div class="k">Source · 1</div>
+        <div class="t">canonical/*.md</div>
+        <div class="d">9 blocs de contenu partagés + <code>_frontmatter.yml</code> (source unique de la <code>version</code>) + <code>mcp-snippet.json</code>.</div>
+      </div>
+      <div class="arrow">+</div>
+      <div class="node src">
+        <div class="k">Source · 2</div>
+        <div class="t">platforms/&lt;name&gt;/recipe.json</div>
+        <div class="d">Quels blocs, dans quel ordre, quel frontmatter, quels <code>extras</code>. Validé par Zod. Optionnel <code>header.md</code>.</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node eng">
+        <div class="k">Moteur</div>
+        <div class="t">scripts/build.ts</div>
+        <div class="d">lit la recette → frontmatter → header → concatène les blocs → applique <code>transforms</code> → injecte <code>$version</code> → écrit → rend les <code>extras</code>.</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node out">
+        <div class="k">Sortie</div>
+        <div class="t">dist/&lt;name&gt;/…</div>
+        <div class="d"><b>Gitignoré</b> — jamais édité à la main. Régénéré par <code>npm run build</code>.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:18px">
+    <div class="card"><div class="ic">🧩</div><h3>transforms</h3><p><code>wrap-section</code> (préfixe <code>## titre</code>), <code>wrap-tool-tag</code> (entoure de <code>&lt;tool&gt;</code>), <code>strip-frontmatter</code>.</p></div>
+    <div class="card"><div class="ic">📦</div><h3>extras</h3><p><code>plugin-manifest</code>, <code>marketplace</code>, <code>slash-commands</code>, <code>mcp-snippet</code> (json/jsonc/yaml/toml), <code>agent-skills-index</code>.</p></div>
+    <div class="card"><div class="ic">✅</div><h3>tests</h3><p>Vitest : un snapshot par plateforme + tests unitaires du build. <code>npm test -- -u</code> ré-bénit après une modif intentionnelle.</p></div>
+  </div>
+
+  <div class="note" style="margin-top:18px"><span class="i">✦</span><div>
+    <b>Pour modifier le savoir-faire</b> (nouvel outil, prix, caveat) : éditez <b>un</b> bloc <code>canonical/*.md</code> → toutes les plateformes qui le listent héritent. Puis bump <code>version</code>, <code>npm run build</code>, <code>npm test -- -u</code>, commit. Ne jamais commiter ni éditer <code>dist/</code>.
+  </div></div>
+</div></section>
+
+<!-- TOOLS -->
+<section id="tools"><div class="wrap">
+  <div class="eyebrow">Les outils MCP</div>
+  <h2>24 outils, 4 familles</h2>
+  <p class="lede">Tous <b>database-backed</b> (un appel, snapshots alignés dans le temps), sauf l'exception <code>get_funding_rates</code> à éviter.</p>
+
+  <div class="toolgrp">
+    <div class="hd"><span class="pill" style="background:#ff8a3d22;color:var(--acc)">Stratégie &amp; arbitrage</span></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Outil</th><th>Quand</th></tr></thead>
+      <tbody>
+        <tr><td><code>find_arbitrage_strategies</code></td><td class="when"><b>Défaut</b> pour toute question d'arbitrage.</td></tr>
+        <tr><td><code>find_strategy_for_ticker</code></td><td class="when">Meilleure paire long/short pour <b>un</b> ticker.</td></tr>
+        <tr><td><code>find_spot_strategies</code></td><td class="when">Paires spot/perp (cash-and-carry).</td></tr>
+        <tr><td><code>simulate_strategy</code></td><td class="when">Projeter le PnL d'une paire perp/perp.</td></tr>
+        <tr><td><code>simulate_spot_strategy</code></td><td class="when">Projeter le PnL d'une paire spot/perp.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="toolgrp">
+    <div class="hd"><span class="pill" style="background:#5aa9ff22;color:var(--blu)">Découverte &amp; données marché</span></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Outil</th><th>Quand</th></tr></thead>
+      <tbody>
+        <tr><td><code>list_exchanges</code></td><td class="when">Clé d'exchange valide / venues supportées (flag <code>supportsRWA</code>).</td></tr>
+        <tr><td><code>list_tickers</code></td><td class="when">Quels tickers existent et sur quels exchanges.</td></tr>
+        <tr><td><code>get_aggregated_markets</code></td><td class="when">Snapshot cross-exchange en un appel (remplace le fan-out).</td></tr>
+        <tr><td><code>get_market_extremes</code></td><td class="when">Funding le plus haut / bas en ce moment.</td></tr>
+        <tr><td><code>get_funding_spikes</code></td><td class="when">« Ce qui est inhabituel » — outliers z-score cross-exchange.</td></tr>
+        <tr><td><code>get_ticker_markets</code></td><td class="when">Un ticker sur tous les exchanges (inclut <code>suggestedArb</code>).</td></tr>
+        <tr><td><code>compare_tickers</code></td><td class="when">Plusieurs tickers cross-exchange en un appel.</td></tr>
+        <tr><td><code>get_market_for_ticker_on_exchange</code></td><td class="when">Lookup marché unique (un ticker, un exchange).</td></tr>
+        <tr><td><code>get_historical_funding</code></td><td class="when">Évolution du taux, ou « taux actuel » via le dernier point.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="two">
+    <div class="toolgrp">
+      <div class="hd"><span class="pill" style="background:#43d9a322;color:var(--grn)">Coûts, statut &amp; méta</span></div>
+      <div class="tbl-wrap"><table>
+        <tbody>
+          <tr><td><code>get_execution_cost_history</code></td><td class="when">Slippage + frais (une jambe).</td></tr>
+          <tr><td><code>get_strategy_execution_cost_history</code></td><td class="when">Coût round-trip d'une paire.</td></tr>
+          <tr><td><code>get_exchange_status</code></td><td class="when">Fraîcheur des données.</td></tr>
+          <tr><td><code>get_platform_stats</code></td><td class="when">Vue d'ensemble / totaux.</td></tr>
+          <tr><td><code>get_plans</code></td><td class="when">Plans API : quotas, limites, prix.</td></tr>
+          <tr><td><code>whoami</code></td><td class="when">Debug auth, rapport de quota.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="toolgrp">
+      <div class="hd"><span class="pill" style="background:#ff6b6b22;color:var(--red)">À ne PAS utiliser</span></div>
+      <div class="tbl-wrap"><table>
+        <tbody class="danger">
+          <tr><td><code>get_funding_rates</code></td><td class="when">Tape les API live des exchanges — lent, non aligné. → utiliser <code>get_aggregated_markets</code> ou <code>get_historical_funding</code>.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="card" style="margin-top:12px"><h3 style="font-size:14px;margin-bottom:6px">Contraintes dures</h3>
+        <p style="font-size:13px"><code>tickers</code> en MAJUSCULES, 1–20/appel · <code>count</code> ≤ 50 · <code>periodDays</code> ≤ 30 (60 pour coûts) · <code>size</code> ∈ <code>1k|5k|10k|50k|100k</code> · clés d'exchange en minuscules.</p>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- DECISION TREE -->
+<section><div class="wrap">
+  <div class="eyebrow">Le cœur de la skill</div>
+  <h2>L'arbre de décision</h2>
+  <p class="lede">La logique « intention utilisateur → bon outil » que la skill injecte dans l'agent.</p>
+  <div class="dtree">
+    <div class="dt"><span class="q">« Meilleur arb / quoi trader »</span><span class="to">find_arbitrage_strategies</span></div>
+    <div class="dt"><span class="q">« Meilleur arb pour le ticker X »</span><span class="to">find_strategy_for_ticker</span></div>
+    <div class="dt"><span class="q">« Arb spot/perp (cash-and-carry) »</span><span class="to">find_spot_strategies</span></div>
+    <div class="dt"><span class="q">« Projeter le PnL d'une paire »</span><span class="to">simulate_strategy / simulate_spot_strategy</span></div>
+    <div class="dt"><span class="q">« Comparer les exchanges pour X »</span><span class="to">get_ticker_markets</span></div>
+    <div class="dt"><span class="q">« Funding le + haut / bas maintenant »</span><span class="to">get_market_extremes</span></div>
+    <div class="dt"><span class="q">« Qu'est-ce qui est inhabituel »</span><span class="to">get_funding_spikes</span></div>
+    <div class="dt"><span class="q">« Comment le taux a évolué sur Y »</span><span class="to">get_historical_funding</span></div>
+    <div class="dt"><span class="q">« Coût d'entrée/sortie (slippage+frais) »</span><span class="to">get_execution_cost_history</span></div>
+    <div class="dt"><span class="q">« Quels exchanges sont supportés »</span><span class="to">list_exchanges</span></div>
+  </div>
+</div></section>
+
+<!-- BLOCKS -->
+<section id="blocks"><div class="wrap">
+  <div class="eyebrow">Les blocs canoniques</div>
+  <h2>9 blocs assemblables</h2>
+  <p class="lede">Chaque plateforme pioche un sous-ensemble ordonné de ces blocs <code>canonical/*.md</code>.</p>
+  <div class="grid g3">
+    <div class="card"><div class="ic" style="color:var(--acc)">🌳</div><h3>decision-tree</h3><p>Intention → outil. Le routeur de la skill.</p></div>
+    <div class="card"><div class="ic" style="color:var(--blu)">🛠️</div><h3>tool-reference</h3><p>Les 24 outils, args utiles, contraintes dures.</p></div>
+    <div class="card"><div class="ic" style="color:var(--acc2)">📚</div><h3>domain-knowledge</h3><p>APR en décimales, mécanique delta-neutre, <code>profitAPR</code> ≠ spread brut.</p></div>
+    <div class="card"><div class="ic" style="color:var(--red)">⚠️</div><h3>caveats</h3><p>Brut de frais · les taux flippent · liquidité · pas un conseil financier.</p></div>
+    <div class="card"><div class="ic" style="color:var(--pur)">⚙️</div><h3>personalization</h3><p>Lit <code>~/.toomanycooks/preferences.md</code> comme defaults par appel.</p></div>
+    <div class="card"><div class="ic" style="color:var(--grn)">📊</div><h3>output-formatting</h3><p>Tables compactes, tri par |APR|, résumé stats — pas de dump brut.</p></div>
+    <div class="card"><div class="ic">🚨</div><h3>failure-modes</h3><p>Auth error, 429/quota, résultats vides → quoi suggérer.</p></div>
+    <div class="card"><div class="ic">💬</div><h3>examples</h3><p>Interactions modèles « top 5 arbs », « compare BTC »…</p></div>
+    <div class="card"><div class="ic">🔬</div><h3>advanced-workflows</h3><p>Screens multi-ticker, détection de flip, backtest — chargé à la demande.</p></div>
+  </div>
+</div></section>
+
+<!-- COMMANDS -->
+<section id="commands"><div class="wrap">
+  <div class="eyebrow">Slash commands</div>
+  <h2>3 commandes (plugin Claude Code)</h2>
+  <p class="lede">Livrées dans le plugin via l'extra <code>slash-commands</code>. Disponibles uniquement sur la variante plugin.</p>
+  <div class="grid g3">
+    <div class="card" style="border-color:#ff8a3d44">
+      <div class="ic" style="color:var(--acc)">📈</div>
+      <h3><code style="font-size:15px">/tmc-arb</code></h3>
+      <p>Top stratégies delta-neutres maintenant. Appelle <code>find_arbitrage_strategies</code> (count 5, liquidité $1M, 7j), rend une table Ticker | Long→Short | APR. Args = raffinement (nombre = count, liste = filtre exchanges).</p>
+    </div>
+    <div class="card" style="border-color:#5aa9ff44">
+      <div class="ic" style="color:var(--blu)">⚖️</div>
+      <h3><code style="font-size:15px">/tmc-rates</code></h3>
+      <p>Compare les funding rates d'un ticker. Appelle <code>get_ticker_markets</code> (uppercased), trie par |APR| desc, remonte la paire <code>suggestedArb</code>. N'utilise jamais <code>get_funding_rates</code>.</p>
+    </div>
+    <div class="card" style="border-color:#b181ff44">
+      <div class="ic" style="color:var(--pur)">🎛️</div>
+      <h3><code style="font-size:15px">/tmc-setup</code></h3>
+      <p>Setup interactif : exchanges par défaut, seuils de liquidité, tolérance au risque, count, fenêtre. Écrit <code>~/.toomanycooks/preferences.md</code> — relu à chaque requête.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- PLATFORMS -->
+<section id="platforms"><div class="wrap">
+  <div class="eyebrow">Les plateformes</div>
+  <h2>15 cibles générées</h2>
+  <p class="lede">Chaque dossier <code>platforms/&lt;name&gt;</code> (hors préfixe <code>_</code>) est auto-découvert par le build. Le serveur MCP est identique partout (lancé via <code>npx</code>).</p>
+  <div class="plats">
+    <div class="plat"><div class="pn"><span class="pe">🟣</span> Claude Code · skill</div><div class="pp">dist/claude-code-skill/SKILL.md → ~/.claude/skills/toomanycooks/</div><div class="chips"><span class="chip x">+personalization</span><span class="chip x">+advanced</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🟣</span> Claude Code · plugin</div><div class="pp">dist/claude-code-plugin/ — marketplace auto-portée</div><div class="chips"><span class="chip x">3 commands</span><span class="chip x">MCP intégré</span><span class="chip">userConfig key</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🟩</span> Cursor</div><div class="pp">.cursor/rules/toomanycooks.mdc</div><div class="chips"><span class="chip">mcp-snippet json</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🔵</span> Cline</div><div class="pp">.clinerules/toomanycooks.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🟧</span> Continue.dev</div><div class="pp">.continue/rules/toomanycooks.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">⬛</span> Codex CLI</div><div class="pp">AGENTS.snippet.md + ~/.codex/config.toml</div><div class="chips"><span class="chip">mcp-snippet toml</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">⬛</span> Codex · plugin</div><div class="pp">dist/codex-plugin/ — .codex-plugin + .mcp.json</div><div class="chips"><span class="chip x">+personalization</span><span class="chip">env key</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🐙</span> GitHub Copilot</div><div class="pp">.github/copilot-instructions.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">✨</span> Gemini</div><div class="pp">GEMINI.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🟠</span> Hermes</div><div class="pp">skills/…/SKILL.md + system-prompt.md fallback</div><div class="chips"><span class="chip x">agent-skills-index</span><span class="chip">.well-known</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🧩</span> Junie (JetBrains)</div><div class="pp">.junie/guidelines.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🐾</span> OpenClaw</div><div class="pp">skills/toomanycooks/SKILL.md</div><div class="chips"><span class="chip x">+advanced</span><span class="chip">mcp-snippet</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🦘</span> Roo Code</div><div class="pp">.roo/rules/toomanycooks.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🌊</span> Windsurf</div><div class="pp">.windsurf/rules/toomanycooks.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">⚡</span> Zed</div><div class="pp">.rules</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
+  </div>
+</div></section>
+
+<!-- INSTALL -->
+<section id="install"><div class="wrap">
+  <div class="eyebrow">Installer</div>
+  <h2>De zéro à requête</h2>
+  <p class="lede">Le serveur MCP étant lancé via <code>npx</code>, rien à installer globalement.</p>
+  <div class="steps">
+    <div class="step">
+      <h3>Récupérer une clé API (une fois, pour tout)</h3>
+      <p>Tier gratuit (100 req/jour) sur <a href="https://toomanycooks.app/dashboard/api-keys" target="_blank" style="color:var(--acc)">toomanycooks.app/dashboard/api-keys</a>. La clé ressemble à <code>tmc_live_…</code> — référencée partout comme <code>TMC_API_KEY</code>.</p>
+    </div>
+    <div class="step">
+      <h3>Choisir sa plateforme &amp; déposer la skill/rule</h3>
+      <p>Copier le fichier généré dans le chemin de la plateforme (voir tableau ci-dessus). Détail complet par plateforme dans <code>INSTALL.md</code>.</p>
+    </div>
+    <div class="step">
+      <h3>Brancher le serveur MCP</h3>
+      <p>Ajouter le bloc <code>mcpServers</code> (forme Claude Desktop / Claude Code ci-dessous). Codex stocke ça dans <code>~/.codex/config.toml</code>.</p>
+    </div>
+  </div>
+
+  <div class="two" style="margin-top:24px">
+    <div>
+      <h3 style="margin-bottom:6px">Config MCP standard</h3>
+<pre><span class="p">{</span>
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"toomanycooks"</span>: {
+      <span class="k">"command"</span>: <span class="s">"npx"</span>,
+      <span class="k">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"@toomanycooks/mcp-server"</span>],
+      <span class="k">"env"</span>: { <span class="k">"TMC_API_KEY"</span>: <span class="s">"tmc_live_..."</span> }
+    }
+  }
+<span class="p">}</span></pre>
+    </div>
+    <div>
+      <h3 style="margin-bottom:6px">Claude Code plugin — une ligne</h3>
+<pre><span class="c"># marketplace auto-portée par le tree dist/</span>
+<span class="v">/plugin</span> marketplace add naavix/toomanycooks-plugin
+<span class="v">/plugin</span> install toomanycooks@toomanycooks
+
+<span class="c"># tester le build local avant publication</span>
+claude --plugin-dir ./dist/claude-code-plugin</pre>
+      <p style="color:var(--mut);font-size:13px;margin-top:10px">À l'activation, Claude Code demande la <code>TMC_API_KEY</code> (déclarée <code>sensitive</code> en <code>userConfig</code>, stockée dans le keychain OS).</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- MAINTAIN -->
+<section><div class="wrap">
+  <div class="eyebrow">Maintenir le dépôt</div>
+  <h2>Le workflow qui pique</h2>
+  <div class="two">
+    <div>
+      <p class="lede" style="margin-bottom:18px">Ne jamais éditer <code>dist/</code> à la main. On corrige la source canonique ou la recette, puis on régénère.</p>
+<pre><span class="v">npm</span> install
+<span class="v">npm</span> run build      <span class="c"># régénère dist/ (toutes plateformes)</span>
+<span class="v">npm</span> test           <span class="c"># vitest : snapshot/plateforme + unit</span>
+<span class="v">npm</span> test -- -u     <span class="c"># ré-bénit après modif intentionnelle</span>
+<span class="v">npm</span> run check      <span class="c"># Biome lint + format</span>
+<span class="v">npm</span> run mirror -- --platform=&lt;name&gt; --repo=&lt;git-url&gt;</pre>
+    </div>
+    <div class="grid" style="gap:12px">
+      <div class="card"><h3 style="font-size:15px">CI · build.yml</h3><p>build + test sur chaque push/PR.</p></div>
+      <div class="card"><h3 style="font-size:15px">CI · mirror.yml</h3><p>sur push <code>main</code>, pousse les trees <code>dist/&lt;platform&gt;</code> vers les repos marketplace standalone (auth <code>MIRROR_PUSH_TOKEN</code>).</p></div>
+      <div class="card"><h3 style="font-size:15px">Ajouter une plateforme</h3><p>créer <code>platforms/&lt;name&gt;/recipe.json</code> (+ <code>header.md</code> optionnel) → auto-découvert. L'ajouter à <code>PLATFORM_OUTPUTS</code> dans les tests.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div>🍳 <b>Too Many Cooks</b> · skill build pipeline · MIT · v1.2.0</div>
+  <div>Source de vérité : <code class="kbd">canonical/*.md</code> + <code class="kbd">platforms/*/recipe.json</code></div>
+</div></footer>
+
+</body>
+</html>

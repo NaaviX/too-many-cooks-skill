@@ -9,6 +9,7 @@ const root = path.resolve(__dirname, "..");
 /** Primary generated artifact per platform — the file we snapshot. */
 const PLATFORM_OUTPUTS: Record<string, string> = {
 	"claude-code-skill": "dist/claude-code-skill/SKILL.md",
+	"agent-skills": "skills/toomanycooks/SKILL.md",
 	"claude-code-plugin": "dist/claude-code-plugin/skills/toomanycooks/SKILL.md",
 	cursor: "dist/cursor/.cursor/rules/toomanycooks.mdc",
 	cline: "dist/cline/.clinerules/toomanycooks.md",
@@ -89,7 +90,11 @@ describe("multi-platform build", () => {
 		await buildPlatform("claude-code-plugin", { rootDir: root });
 		const dir = path.join(root, "dist/claude-code-plugin/commands");
 		const files = (await fs.readdir(dir)).sort();
-		expect(files).toEqual(["tmc-arb.md", "tmc-rates.md", "tmc-setup.md"]);
+		expect(files).toEqual([
+			"toomanycooks-arbitrage.md",
+			"toomanycooks-rates.md",
+			"toomanycooks-setup.md",
+		]);
 	});
 
 	it("codex-plugin emits a Codex manifest, MCP config, and skill at the plugin root", async () => {
@@ -121,10 +126,24 @@ describe("multi-platform build", () => {
 	});
 
 	it("every MCP-wired platform emits a runnable mcp-snippet.json", async () => {
-		for (const platform of ["codex", "hermes", "openclaw", "cursor", "cline", "continue"]) {
+		for (const platform of [
+			"codex",
+			"hermes",
+			"openclaw",
+			"cursor",
+			"cline",
+			"continue",
+			"agent-skills",
+		]) {
 			await buildPlatform(platform, { rootDir: root });
+			// agent-skills ships its snippet at the repo root (the mirror-less,
+			// `npx skills add`-served tree); openclaw nests it under the skill dir.
 			const dir =
-				platform === "openclaw" ? "dist/openclaw/skills/toomanycooks" : `dist/${platform}`;
+				platform === "agent-skills"
+					? "."
+					: platform === "openclaw"
+						? "dist/openclaw/skills/toomanycooks"
+						: `dist/${platform}`;
 			const raw = await fs.readFile(path.join(root, `${dir}/mcp-snippet.json`), "utf8");
 			expect(JSON.parse(raw)).toMatchObject({ command: "npx" });
 		}

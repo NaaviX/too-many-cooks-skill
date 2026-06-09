@@ -18,7 +18,7 @@ Steps:
 
    ```
    # Too Many Cooks — user preferences
-   # Written by /tmc-setup. Edit by hand or re-run /tmc-setup anytime.
+   # Written by /toomanycooks-setup. Edit by hand or re-run /toomanycooks-setup anytime.
 
    exchanges: hyperliquid, lighter, extended
    minVolume24h: 1000000
@@ -29,4 +29,4 @@ Steps:
    quote: USDC
    ```
 
-5. Confirm the saved path and summarize the chosen defaults. Tell the user they can re-run `/tmc-setup` or edit the file directly, and that inline instructions always override these defaults.
+5. Confirm the saved path and summarize the chosen defaults. Tell the user they can re-run `/toomanycooks-setup` or edit the file directly, and that inline instructions always override these defaults.

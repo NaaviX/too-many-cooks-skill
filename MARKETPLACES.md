@@ -52,6 +52,7 @@ approved plugins are pinned by commit SHA and bumped automatically on push.
 
 | Channel | How | Status |
 |---|---|---|
+| Agent Skills (`npx skills add`) | `npx skills add https://github.com/naavix/too-many-cooks-skill` — reads the **committed** `skills/toomanycooks/SKILL.md` + `mcp-snippet.json` at the source repo root (built from `canonical/`, not mirrored) | ✅ served from source repo |
 | Aggregator (lobehub.com **or** skillsmp.com) | One listing, links back to this repo | ☐ not submitted |
 | Hermes — Skills Hub / tap repo | `hermes skills publish dist/hermes/skills/toomanycooks --to github --repo naavix/toomanycooks-hermes-skills` | ☐ not published |
 | Hermes / Agent Skills well-known | Serve `dist/hermes/.well-known/agent-skills/` from `toomanycooks.app` | ☐ not deployed |

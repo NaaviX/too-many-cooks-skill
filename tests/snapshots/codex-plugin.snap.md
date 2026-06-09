@@ -100,7 +100,9 @@ The DB stores periodically-collected, time-aligned, deduped snapshots. Live-exch
 
 ## Personalization
 
-Before answering a funding-rate or arbitrage question, check for a user preferences file at `~/.toomanycooks/preferences.md`. If it exists, parse its `key: value` lines and treat them as **defaults** for every tool call. Never block on a missing file — if it isn't there, behave normally (and, in Claude Code, you may suggest running `/tmc-setup` once to capture defaults). Inline instructions in the user's message always override the file.
+These are the user-tunable defaults (the "dials"): `exchanges`, `minVolume24h`, `minOpenInterest`, `count`, `periodDays`, `riskTolerance`, `quote`. They live in one file and override nothing the user types inline.
+
+Before answering a funding-rate or arbitrage question, check for a user preferences file at `~/.toomanycooks/preferences.md`. If it exists, parse its `key: value` lines and treat them as **defaults** for every tool call. Never block on a missing file — if it isn't there, behave normally (and, in Claude Code, you may suggest running `/toomanycooks-setup` once to capture defaults). Inline instructions in the user's message always override the file.
 
 The file uses simple `key: value` lines (lines starting with `#` are comments):
 
