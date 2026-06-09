@@ -8,22 +8,12 @@ const root = path.resolve(__dirname, "..");
 
 /** Primary generated artifact per platform — the file we snapshot. */
 const PLATFORM_OUTPUTS: Record<string, string> = {
-	"claude-code-skill": "dist/claude-code-skill/SKILL.md",
 	"agent-skills": "skills/toomanycooks/SKILL.md",
 	"claude-code-plugin": "dist/claude-code-plugin/skills/toomanycooks/SKILL.md",
-	cursor: "dist/cursor/.cursor/rules/toomanycooks.mdc",
-	cline: "dist/cline/.clinerules/toomanycooks.md",
-	continue: "dist/continue/.continue/rules/toomanycooks.md",
-	codex: "dist/codex/AGENTS.snippet.md",
 	"codex-plugin": "dist/codex-plugin/skills/toomanycooks/SKILL.md",
-	hermes: "dist/hermes/system-prompt.md",
-	openclaw: "dist/openclaw/skills/toomanycooks/SKILL.md",
-	windsurf: "dist/windsurf/.windsurf/rules/toomanycooks.md",
+	cursor: "dist/cursor/.cursor/rules/toomanycooks.mdc",
 	copilot: "dist/copilot/.github/copilot-instructions.md",
-	gemini: "dist/gemini/GEMINI.md",
-	roo: "dist/roo/.roo/rules/toomanycooks.md",
-	zed: "dist/zed/.rules",
-	junie: "dist/junie/.junie/guidelines.md",
+	hermes: "dist/hermes/system-prompt.md",
 };
 
 describe("multi-platform build", () => {
@@ -126,24 +116,11 @@ describe("multi-platform build", () => {
 	});
 
 	it("every MCP-wired platform emits a runnable mcp-snippet.json", async () => {
-		for (const platform of [
-			"codex",
-			"hermes",
-			"openclaw",
-			"cursor",
-			"cline",
-			"continue",
-			"agent-skills",
-		]) {
+		for (const platform of ["hermes", "cursor", "copilot", "agent-skills"]) {
 			await buildPlatform(platform, { rootDir: root });
 			// agent-skills ships its snippet at the repo root (the mirror-less,
-			// `npx skills add`-served tree); openclaw nests it under the skill dir.
-			const dir =
-				platform === "agent-skills"
-					? "."
-					: platform === "openclaw"
-						? "dist/openclaw/skills/toomanycooks"
-						: `dist/${platform}`;
+			// `npx skills add`-served tree); the rest nest it under dist/<platform>.
+			const dir = platform === "agent-skills" ? "." : `dist/${platform}`;
 			const raw = await fs.readFile(path.join(root, `${dir}/mcp-snippet.json`), "utf8");
 			expect(JSON.parse(raw)).toMatchObject({ command: "npx" });
 		}
@@ -182,15 +159,5 @@ describe("multi-platform build", () => {
 			await fs.readFile(path.join(root, "dist/hermes/.well-known/skills/index.json"), "utf8"),
 		);
 		expect(legacy.skills[0].name).toBe("toomanycooks");
-	});
-
-	it("openclaw resolves the $version placeholder", async () => {
-		await buildPlatform("openclaw", { rootDir: root });
-		const out = await fs.readFile(
-			path.join(root, "dist/openclaw/skills/toomanycooks/SKILL.md"),
-			"utf8",
-		);
-		expect(out).toContain("version: 1.2.0");
-		expect(out).not.toContain("$version");
 	});
 });

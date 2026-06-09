@@ -21,17 +21,8 @@ DIST="$ROOT/dist"
 # platform -> "source-relative-to-dist/<platform>::target-dir::target-filename"
 # A literal '~' in target-dir is expanded to $HOME. Empty filename copies a tree.
 declare -A ROUTES=(
-	[claude-code-skill]="SKILL.md::~/.claude/skills/toomanycooks::SKILL.md"
 	[cursor]=".cursor/rules/toomanycooks.mdc::.cursor/rules::toomanycooks.mdc"
-	[cline]=".clinerules/toomanycooks.md::.clinerules::toomanycooks.md"
-	[continue]=".continue/rules/toomanycooks.md::.continue/rules::toomanycooks.md"
-	[windsurf]=".windsurf/rules/toomanycooks.md::.windsurf/rules::toomanycooks.md"
-	[roo]=".roo/rules/toomanycooks.md::.roo/rules::toomanycooks.md"
 	[copilot]=".github/copilot-instructions.md::.github::copilot-instructions.md"
-	[gemini]="GEMINI.md::.::GEMINI.md"
-	[junie]=".junie/guidelines.md::.junie::guidelines.md"
-	[zed]=".rules::.::.rules"
-	[openclaw]="skills/toomanycooks::~/.openclaw/skills::"
 	[hermes]="skills/toomanycooks::~/.hermes/skills/finance::"
 )
 
@@ -42,7 +33,8 @@ list_platforms() {
 	done
 	echo
 	echo "Note: 'claude-code-plugin' / 'codex-plugin' install via their marketplaces"
-	echo "(see INSTALL.md), and 'agent-skills' installs via: npx skills add <repo-url>."
+	echo "(see INSTALL.md). Every other editor (Cline, Continue, Windsurf, Roo, Zed,"
+	echo "Gemini, Junie, OpenClaw, Claude Code, …) installs via: npx skills add <repo-url>."
 }
 
 if [[ $# -eq 0 || "${1:-}" == "--list" || "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then

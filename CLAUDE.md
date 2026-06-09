@@ -10,9 +10,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this repo produces
 
 The Too Many Cooks **skill** (the agent *know-how* for using the `@toomanycooks/mcp-server` MCP
-tools) declined into 8 platform formats: `claude-code-skill`, `claude-code-plugin`, `cursor`,
-`cline`, `continue`, `codex`, `hermes`, `openclaw`. The MCP server itself lives elsewhere (npm
-package); this repo only authors the prose/config that wraps it.
+tools), declined into the artifacts the [`skills`](https://github.com/vercel-labs/skills) CLI
+(`npx skills add`) **can't** produce. That CLI already pulls the canonical skill into ~70 editors
+(Cline, Continue, Windsurf, Roo, Zed, Gemini, Junie, OpenClaw, Claude Code, …), so this repo only
+builds the 6 things it can't: the two **plugins** (`claude-code-plugin`, `codex-plugin` — slash
+commands + bundled MCP + key handling), the two native-rule integrations worth shipping by hand
+(`cursor`, `copilot`), `hermes` (its `.well-known/` discovery tree + env-var prompt), and
+`agent-skills` (the canonical root `skills/toomanycooks/SKILL.md` the CLI itself reads). The MCP
+server lives elsewhere (npm package); this repo only authors the prose/config that wraps it.
 
 ## Commands
 

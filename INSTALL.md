@@ -10,8 +10,8 @@ pieces that make up the integration:
    to reach for, how to read APRs, what caveats to surface. With it, the agent
    behaves like a quant analyst instead of calling tools blindly.
 
-Some platforms bundle both in one install (Claude Code plugin); the rest take the
-rule file and the MCP config separately.
+Most editors install the skill with one command — `npx skills add` (below) — and
+take the MCP config separately. The two plugins (Claude Code, Codex) bundle both.
 
 ---
 
@@ -28,9 +28,11 @@ fallback for the remaining hosts.
   /plugin install toomanycooks@toomanycooks
   ```
 
-- **Cursor / ChatGPT / Codex / any Agent-Skills host → `npx skills add`.** Pulls
-  the skill straight from this repo (no clone). It installs the *know-how*
-  only — add the MCP block once afterwards (see [Agent Skills](#agent-skills-npx-skills-add)).
+- **Any other editor → `npx skills add`.** Cursor, Cline, Continue, Windsurf,
+  Roo, Zed, Gemini, Junie, OpenClaw, Claude Code and ~60 more are supported
+  targets. Pulls the skill straight from this repo (no clone). It installs the
+  *know-how* only — add the MCP block once afterwards (see
+  [Agent Skills](#agent-skills-npx-skills-add)).
 
   ```bash
   npx skills add https://github.com/naavix/too-many-cooks-skill
@@ -67,14 +69,15 @@ This exact object also ships next to every platform's output as
 
 | Install route | Platforms | How |
 |---|---|---|
+| **`npx skills add`** | Cursor, Cline, Continue, Windsurf, Roo, Zed, Gemini, Junie, OpenClaw, Claude Code, … | Pulls the skill from this repo — no clone, no build |
 | **Published marketplace / git** | Claude Code plugin, Cursor | Pull from the mirror repos — no clone needed |
-| **Build from source** | everything else | Clone this repo, `npm run build`, copy the generated file from `dist/<platform>/` |
+| **Build from source** | the plugins, Cursor, Copilot, Hermes | Clone this repo, `npm run build`, copy the generated file from `dist/<platform>/` (or use `./install.sh`) |
 
 To build from source:
 
 ```bash
 git clone git@gitlab.com:too-many-cooks/skill.git
-cd skill && npm install && npm run build   # populates dist/ for all 8 platforms
+cd skill && npm install && npm run build   # populates dist/ for every built platform
 ```
 
 ---
@@ -101,38 +104,15 @@ claude --plugin-dir ./dist/claude-code-plugin
 
 ---
 
-## Claude Code / Claude Desktop — skill only (manual)
+## Codex — plugin
 
-Use this if you want the know‑how without the plugin's slash commands.
+Install the Codex plugin tree (`dist/codex-plugin/`) through a local/personal
+Codex marketplace. It bundles the skill and the MCP config (`.mcp.json`), which
+reads `TMC_API_KEY` from the environment that launches Codex — nothing to
+hand-edit.
 
-1. **Skill** — copy the skill into your skills directory:
-
-   ```bash
-   mkdir -p ~/.claude/skills/toomanycooks
-   cp dist/claude-code-skill/SKILL.md ~/.claude/skills/toomanycooks/
-   ```
-
-2. **MCP server** — add the server to your client config:
-
-   - **Claude Code:** `claude mcp add-json toomanycooks '{"command":"npx","args":["-y","@toomanycooks/mcp-server"],"env":{"TMC_API_KEY":"tmc_live_..."}}'`
-     (or drop a `.mcp.json` in your project root with the `mcpServers` block below).
-   - **Claude Desktop:** edit `claude_desktop_config.json`
-     (macOS `~/Library/Application Support/Claude/`, Windows `%APPDATA%\Claude\`)
-     and add:
-
-     ```json
-     {
-       "mcpServers": {
-         "toomanycooks": {
-           "command": "npx",
-           "args": ["-y", "@toomanycooks/mcp-server"],
-           "env": { "TMC_API_KEY": "tmc_live_..." }
-         }
-       }
-     }
-     ```
-
-   Restart the client after editing.
+> Want the know-how *without* the plugin? Use `npx skills add` (Codex is a
+> supported target) and add the MCP server to `~/.codex/config.toml`.
 
 ---
 
@@ -167,62 +147,17 @@ Use this if you want the know‑how without the plugin's slash commands.
 
 ---
 
-## Cline
+## GitHub Copilot
 
-1. **Rule** — copy into your project:
-
-   ```bash
-   mkdir -p .clinerules
-   cp dist/cline/.clinerules/toomanycooks.md .clinerules/
-   ```
-
-2. **MCP server** — in VS Code, open Cline → **MCP Servers → Configure** (edits
-   `cline_mcp_settings.json`) and add the `toomanycooks` entry under
-   `mcpServers` (same three fields as above). The ready‑made object is in
-   `dist/cline/mcp-snippet.json`.
-
----
-
-## Continue.dev
-
-1. **Rule** — copy into your project:
+1. **Instructions** — copy into your repo:
 
    ```bash
-   mkdir -p .continue/rules
-   cp dist/continue/.continue/rules/toomanycooks.md .continue/rules/
+   mkdir -p .github
+   cp dist/copilot/.github/copilot-instructions.md .github/
    ```
 
-2. **MCP server** — add the server to your Continue config
-   (`~/.continue/config.yaml`, or the assistant's `config.json`). The fields
-   match `dist/continue/mcp-snippet.json`:
-
-   ```yaml
-   mcpServers:
-     - name: toomanycooks
-       command: npx
-       args: ["-y", "@toomanycooks/mcp-server"]
-       env:
-         TMC_API_KEY: tmc_live_...
-   ```
-
----
-
-## Codex CLI
-
-1. **Know‑how** — paste the contents of `dist/codex/AGENTS.snippet.md` into your
-   project's `AGENTS.md` (Codex reads it automatically).
-
-2. **MCP server** — Codex stores MCP servers in `~/.codex/config.toml`:
-
-   ```toml
-   [mcp_servers.toomanycooks]
-   command = "npx"
-   args = ["-y", "@toomanycooks/mcp-server"]
-   env = { TMC_API_KEY = "tmc_live_..." }
-   ```
-
-   The same three fields are shipped as JSON in `dist/codex/mcp-snippet.json` if
-   your Codex version uses a JSON config instead.
+2. **MCP server** — add `toomanycooks` to `.vscode/mcp.json` (or your Copilot MCP
+   settings) using the fields from `dist/copilot/mcp-snippet.json`.
 
 ---
 
@@ -257,25 +192,12 @@ Use this if you want the know‑how without the plugin's slash commands.
 
 ---
 
-## OpenClaw
+## Agent Skills (`npx skills add`) — everything else
 
-Copy the whole skill folder — it carries the know‑how and the MCP snippet
-together:
-
-```bash
-cp -r dist/openclaw/skills/toomanycooks <your-openclaw-skills-dir>/
-```
-
-`SKILL.md` is the know‑how; `mcp-snippet.json` next to it is the server config to
-register with OpenClaw.
-
----
-
-## Agent Skills (`npx skills add`)
-
-Any host that speaks the [Vercel Agent-Skills](https://github.com/vercel-labs/agent-skills)
-format (Cursor, ChatGPT, Codex, Claude, …) can pull the skill with one command —
-no clone, no build:
+This is the install path for **every editor not listed above** — Cline, Continue,
+Windsurf, Roo, Zed, Gemini, Junie, OpenClaw, Claude Code and ~60 more are
+supported targets of the [`skills`](https://github.com/vercel-labs/skills) CLI. It
+pulls the skill straight from this repo with one command — no clone, no build:
 
 ```bash
 npx skills add https://github.com/naavix/too-many-cooks-skill          # the skill
@@ -283,11 +205,12 @@ npx skills add https://github.com/naavix/too-many-cooks-skill --skill toomanycoo
 ```
 
 The CLI scans the repo's `skills/` folder and installs `skills/toomanycooks/SKILL.md`
-into your agent's skills directory. It installs the **know-how only** — the
-`npx skills add` flow can't register an MCP server, so add the MCP block once:
-the ready-made object is the repo-root `mcp-snippet.json` (the standard
-`command` / `args` / `env` shape), registered with your host's MCP config exactly
-as in the per-platform sections above.
+into your agent's native skills location. Target one or more agents explicitly
+with `-a` (e.g. `-a cline -a windsurf`); omit it to pick interactively. It
+installs the **know-how only** — the `skills add` flow can't register an MCP
+server, so add the MCP block once: the ready-made object is the repo-root
+`mcp-snippet.json` (the standard `command` / `args` / `env` shape), registered
+with your host's MCP config.
 
 > No mirror repo here: `skills/toomanycooks/SKILL.md` and `mcp-snippet.json` are
 > committed at the root of the source repo itself (generated by `npm run build`
@@ -324,14 +247,12 @@ that same `key: value` file by hand — the skill picks it up automatically.
 | Platform | Know‑how file | MCP config target |
 |---|---|---|
 | Claude Code (plugin) | bundled — `/plugin install` | prompted at enable (`userConfig`) |
+| Codex (plugin) | bundled — `dist/codex-plugin/` | `.mcp.json` reads `TMC_API_KEY` from env |
 | Agent Skills (`npx skills add`) | `npx skills add github.com/naavix/too-many-cooks-skill` | repo-root `mcp-snippet.json` |
-| Claude Code / Desktop (skill) | `~/.claude/skills/toomanycooks/SKILL.md` | `.mcp.json` / `claude_desktop_config.json` |
 | Cursor | `.cursor/rules/toomanycooks.mdc` | `~/.cursor/mcp.json` |
-| Cline | `.clinerules/toomanycooks.md` | `cline_mcp_settings.json` |
-| Continue.dev | `.continue/rules/toomanycooks.md` | `~/.continue/config.yaml` |
-| Codex CLI | paste into `AGENTS.md` | `~/.codex/config.toml` |
+| GitHub Copilot | `.github/copilot-instructions.md` | `.vscode/mcp.json` |
 | Hermes | paste into system prompt | Hermes MCP runtime config |
-| OpenClaw | `skills/toomanycooks/SKILL.md` | `skills/toomanycooks/mcp-snippet.json` |
+| Everything else | via `npx skills add` | repo-root `mcp-snippet.json` |
 
 > Maintainers: these paths are generated from `canonical/` + `platforms/<name>/recipe.json`.
 > If an output path changes, update this file and `README.md` together. Marketplace
