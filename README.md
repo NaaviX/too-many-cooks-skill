@@ -7,7 +7,7 @@
 [![version](https://img.shields.io/badge/version-1.2.0-2563eb)](./canonical/_frontmatter.yml)
 [![npm: mcp-server](https://img.shields.io/npm/v/@toomanycooks/mcp-server?label=mcp-server&color=cb3837)](https://www.npmjs.com/package/@toomanycooks/mcp-server)
 [![license](https://img.shields.io/badge/license-MIT-22c55e)](#license)
-[![skills add](https://img.shields.io/badge/install-npx%20skills%20add-000000)](#-install)
+[![install](https://img.shields.io/badge/install-npx%20skills%20add-000000)](#2-pick-your-platform)
 
 </div>
 
@@ -22,110 +22,81 @@ Every integration is **two pieces**:
 
 ## 🚀 Install
 
+Three steps: **get a key → pick your platform → add the MCP server.**
+
 ### 1. Get a free API key
 
 100 req/day at **[toomanycooks.app/dashboard/api-keys](https://toomanycooks.app/dashboard/api-keys)**. It looks like `tmc_live_…` — every config below calls it `TMC_API_KEY`.
 
 ### 2. Pick your platform
 
-Find your tool below, then **expand the matching box** for copy-paste commands.
-**Not sure?** Use the last one — `npx skills add` covers ~70 agents.
+**Click your tool to jump to its steps.** Not sure? Use [Any other editor](#any-other-editor) — one command covers ~70 agents.
 
-| Your tool | Install route | Bundles MCP? |
+| Your tool | Setup | Bundles the MCP server? |
 |---|---|:---:|
-| **Claude Code** | plugin marketplace | ✅ |
-| **Codex** | plugin marketplace | ✅ |
-| **Cursor** | rule file + MCP | — |
-| **GitHub Copilot** | instructions + MCP | — |
-| **Hermes** | skill + MCP | — |
-| **Anything else** <br><sub>Cline · Continue · Windsurf · Roo · Zed · Gemini · Junie · OpenClaw · …</sub> | `npx skills add` | — |
+| 🟣 [**Claude Code**](#claude-code) | plugin marketplace | ✅ |
+| ⚫ [**Codex**](#codex) | plugin marketplace | ✅ |
+| 🔵 [**Cursor**](#cursor) | rule file | — |
+| 🐙 [**GitHub Copilot**](#github-copilot) | instructions file | — |
+| 🟠 [**Hermes**](#hermes) | skill file | — |
+| ✨ [**Any other editor**](#any-other-editor) | `npx skills add` | — |
 
-<details>
-<summary><b>Claude Code</b> — plugin (recommended)</summary>
+<sub>**Any other editor** = Cline · Continue · Windsurf · Roo · Zed · Gemini · Junie · OpenClaw · Claude Code · and ~60 more.</sub>
 
-<br>
+#### Claude Code
 
-Bundles the skill, the MCP server, and three slash commands. Prompts for your key on enable — nothing to hand-edit.
+> ⭐ **Recommended.** One install bundles the skill, the MCP server, and three slash commands. Prompts for your key on enable — skip step 3.
 
 ```text
 /plugin marketplace add naavix/toomanycooks-plugin
 /plugin install toomanycooks@toomanycooks
 ```
 
-</details>
+#### Codex
 
-<details>
-<summary><b>Codex</b> — plugin</summary>
+Install the plugin tree `dist/codex-plugin/` via a local/personal Codex marketplace — it bundles the skill and `.mcp.json` (reads `TMC_API_KEY` from the launching environment), so you can skip step 3. Just want the skill? Use [`npx skills add`](#any-other-editor) — Codex is a supported target.
 
-<br>
-
-Install the plugin tree `dist/codex-plugin/` via a local/personal Codex marketplace. It bundles the skill and `.mcp.json`, which reads `TMC_API_KEY` from the environment that launches Codex.
-
-> Prefer the skill without the plugin? Use `npx skills add` (see the **Any other editor** box below) — Codex is a supported target.
-
-</details>
-
-<details>
-<summary><b>Cursor</b></summary>
-
-<br>
+#### Cursor
 
 ```bash
 npm install && npm run build
-./install.sh cursor          # copies the rule + prints the MCP snippet
+./install.sh cursor    # copies the rule, then prints your step-3 snippet
 ```
 
-Then add the printed `toomanycooks` block to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project).
+Drops the rule into `.cursor/rules/`. Add the printed block to `~/.cursor/mcp.json` (global) or `.cursor/mcp.json` (project) — see step 3.
 
-</details>
-
-<details>
-<summary><b>GitHub Copilot</b></summary>
-
-<br>
+#### GitHub Copilot
 
 ```bash
 npm install && npm run build
-./install.sh copilot         # copies instructions + prints the MCP snippet
+./install.sh copilot   # copies instructions, then prints your step-3 snippet
 ```
 
-Then add the printed block to `.vscode/mcp.json` (or your Copilot MCP settings).
+Drops `.github/copilot-instructions.md`. Add the printed block to `.vscode/mcp.json` — see step 3.
 
-</details>
-
-<details>
-<summary><b>Hermes</b></summary>
-
-<br>
+#### Hermes
 
 ```bash
 npm install && npm run build
 ./install.sh hermes
 ```
 
-Hermes reads the `required_environment_variables` block in `SKILL.md` and prompts for `TMC_API_KEY`. A `.well-known/` discovery tree is also generated — see [INSTALL.md](./INSTALL.md#hermes).
+Hermes reads the `required_environment_variables` block in `SKILL.md` and prompts for `TMC_API_KEY`. A `.well-known/` discovery tree is also generated — details in [INSTALL.md](./INSTALL.md#hermes).
 
-</details>
-
-<details open>
-<summary><b>Any other editor</b> — <code>npx skills add</code> (default)</summary>
-
-<br>
+#### Any other editor
 
 Cline, Continue, Windsurf, Roo, Zed, Gemini, Junie, OpenClaw, Claude Code and ~60 more are supported targets of the [`skills`](https://github.com/vercel-labs/skills) CLI. It pulls the skill straight from this repo — no clone, no build:
 
 ```bash
 npx skills add github.com/naavix/too-many-cooks-skill
-# target specific agents:  npx skills add github.com/naavix/too-many-cooks-skill -a cline -a windsurf
+# pick specific agents:  npx skills add github.com/naavix/too-many-cooks-skill -a cline -a windsurf
 ```
 
-This installs the **know-how only** — finish with step 3 below.
-
-</details>
+This installs the **know-how only** — finish with step 3.
 
 ### 3. Add the MCP server
 
-The two plugins above do this for you. Everywhere else, register this object once (every built platform also ships it as `mcp-snippet.json`):
+The two **plugins** do this for you. Everywhere else, register this object once (every built platform also ships it as `mcp-snippet.json`):
 
 ```json
 {
