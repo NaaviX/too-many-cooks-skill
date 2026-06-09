@@ -43,7 +43,8 @@ The single source of truth is **`canonical/*.md`** (shared content blocks) plus
 ```
 canonical/_frontmatter.yml   ← single source of `version` (and name/description/homepage)
 canonical/<block>.md         ← decision-tree, tool-reference, domain-knowledge, caveats,
-                               output-formatting, failure-modes, examples, advanced-workflows
+                               output-formatting, failure-modes, examples, advanced-workflows,
+                               personalization, slash-arguments
 canonical/mcp-snippet.json   ← source for every platform's mcp-snippet extra
 platforms/<name>/recipe.json ← the assembly instructions for one platform
 platforms/<name>/header.md   ← optional platform-specific preamble, prepended before blocks
@@ -55,6 +56,8 @@ dist/<name>/...              ← generated output (GITIGNORED — never hand-edi
 Per-platform build order in `build.ts`: read recipe → load base frontmatter → optional `header.md`
 → concatenate the named `canonical/<block>.md` files → apply `transforms` → inject `frontmatter`
 (with `$version` substituted from `_frontmatter.yml`) → write `outputPath` → render `extras`.
+After all platforms, `scripts/stamp-version.ts` rewrites the version strings in `README.md` (badge)
+and `docs.html` from `_frontmatter.yml` — never edit those by hand; a build test enforces the match.
 
 ### recipe.json shape (validated by Zod in `scripts/recipe-schema.ts`)
 
@@ -64,9 +67,11 @@ Per-platform build order in `build.ts`: read recipe → load base frontmatter �
   replaced with the version from `_frontmatter.yml`.
 - `transforms` (optional) — `wrap-section` (prepend `## title`), `wrap-tool-tag` (wrap in
   `<tool name=…>`), `strip-frontmatter`.
-- `extras` (optional) — `plugin-manifest` (stamps version/name into `.claude-plugin/plugin.json`),
+- `extras` (optional) — `plugin-manifest` / `codex-plugin-manifest` / `codex-mcp-manifest` (stamp
+  version/name into the plugin manifests), `marketplace` (the self-hosted marketplace catalog),
   `slash-commands` (copies a `commands/` dir), `mcp-snippet` (renders `canonical/mcp-snippet.json`
-  as json/jsonc/yaml), `readme-snippet` (no-op; those chunks live in the repo README).
+  as json/jsonc/yaml), `agent-skills-index` (`.well-known/` discovery indexes with SHA-256 digest),
+  `readme-snippet` (no-op; those chunks live in the repo README).
 
 ## Editing workflow (the thing that bites)
 
@@ -112,6 +117,7 @@ in `tests/build.test.ts` so it gets snapshot coverage.
 ## Notes
 
 - `README.md` is the **end-user install guide** (per-platform file paths + MCP config); keep it in
-  sync when output paths change. `AGENT.md` is a short maintainer brief overlapping this file.
+  sync when output paths change. `docs.html` is a standalone visual tour of the pipeline (French);
+  its stats are hand-maintained but its version string is stamped by the build.
 - Root `SKILL.md` is a standalone hand-maintained copy of the skill; the canonical→`dist/` pipeline
   is the source of truth for the generated artifacts.

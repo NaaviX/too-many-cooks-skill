@@ -20,9 +20,10 @@ take the MCP config separately. The two plugins (Claude Code, Codex) bundle both
 Two one-line installs cover most users; everything below them is the manual
 fallback for the remaining hosts.
 
-- **Claude Code → plugin.** Bundles the skill, the MCP server, and four slash
-  commands. Set your API key via `/plugin → Configure options` (required — the
-  MCP won't start without it); no MCP config file to hand-edit.
+- **Claude Code → plugin.** Bundles the skill, the MCP server, and the
+  `/toomanycooks-help` / `/toomanycooks-setup` / `/toomanycooks-doctor` commands.
+  Set your API key via `/plugin → Configure options` (required — the MCP won't
+  start without it); no MCP config file to hand-edit.
 
   ```text
   /plugin marketplace add NaaviX/toomanycooks-plugin
@@ -85,8 +86,10 @@ cd skill && npm install && npm run build   # populates dist/ for every built pla
 
 ## Claude Code — plugin (recommended)
 
-One install bundles the skill, the MCP server, and four slash commands
-(`/toomanycooks-arbitrage`, `/toomanycooks-rates`, `/toomanycooks-setup`, `/toomanycooks-doctor`).
+One install bundles the skill, the MCP server, and three slash commands
+(`/toomanycooks-help`, `/toomanycooks-setup`, `/toomanycooks-doctor`). Data
+queries go through the skill's own dispatch — `/toomanycooks rates BTC`,
+`/toomanycooks arb 10`, …; `/toomanycooks-help` shows the full cheat-sheet.
 The plugin repo doubles as its own marketplace.
 
 ```text
@@ -243,6 +246,10 @@ Once both pieces are in place, ask the agent:
 
 If the agent calls a `toomanycooks` tool and returns live numbers, you're set. A
 `401`/auth error means `TMC_API_KEY` is missing or wrong in the MCP `env`.
+
+Wherever the skill is exposed as a slash command, it also takes arguments:
+`/toomanycooks rates BTC`, `/toomanycooks arb 10`, `/toomanycooks simulate ETH
+lighter extended` — run `/toomanycooks` with no arguments to list all 15 actions.
 
 ### Personalize the defaults (optional)
 

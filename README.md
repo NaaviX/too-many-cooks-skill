@@ -4,7 +4,7 @@
 
 **Crypto perpetuals funding rates & delta-neutral arbitrage across 25 DEX exchanges — for every major AI agent.**
 
-[![version](https://img.shields.io/badge/version-1.2.0-2563eb)](./canonical/_frontmatter.yml)
+[![version](https://img.shields.io/badge/version-1.4.0-2563eb)](./canonical/_frontmatter.yml)
 [![npm: mcp-server](https://img.shields.io/npm/v/@toomanycooks/mcp-server?label=mcp-server&color=cb3837)](https://www.npmjs.com/package/@toomanycooks/mcp-server)
 [![license](https://img.shields.io/badge/license-MIT-22c55e)](#license)
 [![install](https://img.shields.io/badge/install-npx%20skills%20add-000000)](#2-pick-your-platform)
@@ -45,7 +45,7 @@ Three steps: **get a key → pick your platform → add the MCP server.**
 
 #### Claude Code
 
-> ⭐ **Recommended.** One install bundles the skill, the MCP server, and four slash commands — no MCP config to hand-edit (skip step 3).
+> ⭐ **Recommended.** One install bundles the skill, the MCP server, and the `/toomanycooks-help`, `/toomanycooks-setup`, and `/toomanycooks-doctor` commands — no MCP config to hand-edit (skip step 3). Data queries run through `/toomanycooks <action>` (see [What you can ask](#-what-you-can-ask)).
 
 ```text
 /plugin marketplace add NaaviX/toomanycooks-plugin
@@ -121,6 +121,8 @@ The two **plugins** do this for you. Everywhere else, register this object once 
 > *"How has ETH funding evolved on HyperLiquid this past week?"*
 > *"Which exchanges support stocks and forex perps?"*
 
+**Slash shortcuts:** wherever the skill is exposed as a slash command, `/toomanycooks <action>` dispatches straight to the right tool — e.g. `/toomanycooks rates BTC`, `/toomanycooks arb 10 hyperliquid,lighter`, `/toomanycooks simulate ETH lighter extended 25000 60`. Run `/toomanycooks` with no arguments to list all 15 actions.
+
 **Personalize (optional):** run `/toomanycooks-setup` (Claude Code plugin) once to set default exchanges, liquidity floors, risk tolerance, and funding window. It writes `~/.toomanycooks/preferences.md`, read on every query (inline instructions always override). On other platforms, create that `key: value` file by hand.
 
 ## 🛠️ Also available: CLI & SDK
@@ -162,7 +164,9 @@ npm run check       # Biome lint + format
 
 We only build the artifacts `npx skills add` **can't** produce — the two plugins, `cursor`, `copilot`, `hermes`, and the canonical root skill the CLI itself reads. Everything else is delegated to the CLI.
 
-To change the knowledge (new tool, pricing, caveat): edit the relevant `canonical/*.md` block **once**, bump `version` in `canonical/_frontmatter.yml`, `npm run build`, re-bless snapshots, commit. Never hand-edit `dist/` (gitignored) or `skills/toomanycooks/SKILL.md` (generated) — fix the canonical source. CI mirrors the marketplace-bound outputs to their standalone repos ([MARKETPLACES.md](./MARKETPLACES.md)).
+To change the knowledge (new tool, pricing, caveat): edit the relevant `canonical/*.md` block **once**, bump `version` in `canonical/_frontmatter.yml`, `npm run build`, re-bless snapshots, commit. The build also stamps the version into this README's badge and `docs.html`, so never edit those version strings by hand. Never hand-edit `dist/` (gitignored) or `skills/toomanycooks/SKILL.md` (generated) — fix the canonical source. CI mirrors the marketplace-bound outputs to their standalone repos ([MARKETPLACES.md](./MARKETPLACES.md)).
+
+A visual tour of the pipeline (French) lives in [docs.html](./docs.html) — open it in a browser.
 
 </details>
 

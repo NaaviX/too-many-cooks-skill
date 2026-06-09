@@ -4,6 +4,7 @@ import yaml from "js-yaml";
 import { renderExtra } from "./extras.js";
 import { injectFrontmatter } from "./frontmatter.js";
 import { type Recipe, RecipeSchema } from "./recipe-schema.js";
+import { stampVersion } from "./stamp-version.js";
 import { applyTransforms } from "./transforms.js";
 
 export interface BuildContext {
@@ -107,6 +108,16 @@ async function main(): Promise<void> {
 	for (const name of names) {
 		await buildPlatform(name, { rootDir });
 		console.log(`  ✓ ${name}`);
+	}
+
+	const frontmatterRaw = await fs.readFile(
+		path.join(rootDir, "canonical", "_frontmatter.yml"),
+		"utf8",
+	);
+	const { version } = yaml.load(frontmatterRaw) as { version: string };
+	const stamped = await stampVersion(rootDir, version);
+	for (const file of stamped) {
+		console.log(`  ✓ stamped v${version} into ${file}`);
 	}
 }
 

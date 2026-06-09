@@ -171,8 +171,8 @@
 <header class="hero">
   <div class="hero-grid"></div>
   <div class="wrap hero-in">
-    <span class="badge"><span class="dot"></span> v1.2.0 · MIT · build pipeline markdown + TypeScript</span>
-    <h1>Un seul savoir-faire,<br><span class="g">15 plateformes</span> d'agents.</h1>
+    <span class="badge"><span class="dot"></span> v1.4.0 · MIT · build pipeline markdown + TypeScript</span>
+    <h1>Un seul savoir-faire,<br><span class="g">tous vos agents</span> IA.</h1>
     <p class="sub">Ce dépôt transforme <b>une skill canonique</b> — le savoir-faire pour interroger les <b>funding rates</b> de perpétuels crypto et trouver des arbitrages <b>delta-neutres</b> sur 25 DEX — en artefacts skill / rule / plugin pour chaque agent IA. Aucun code runtime : juste de la prose + des recettes JSON assemblées en <code>dist/</code>.</p>
     <div class="cta">
       <a class="btn p" href="#install">⚡ Installer en 3 étapes</a>
@@ -180,10 +180,10 @@
       <a class="btn" href="https://toomanycooks.app" target="_blank">toomanycooks.app ↗</a>
     </div>
     <div class="stats">
-      <div class="stat"><div class="n o">15</div><div class="l">plateformes générées</div></div>
-      <div class="stat"><div class="n b">24</div><div class="l">outils MCP exposés</div></div>
-      <div class="stat"><div class="n g">9</div><div class="l">blocs canoniques</div></div>
-      <div class="stat"><div class="n p">3</div><div class="l">slash commands</div></div>
+      <div class="stat"><div class="n o">6</div><div class="l">plateformes construites</div></div>
+      <div class="stat"><div class="n b">~70</div><div class="l">éditeurs via <code>npx skills add</code></div></div>
+      <div class="stat"><div class="n g">21</div><div class="l">outils MCP exposés</div></div>
+      <div class="stat"><div class="n p">10</div><div class="l">blocs canoniques</div></div>
       <div class="stat"><div class="n">25</div><div class="l">DEX couverts</div></div>
     </div>
   </div>
@@ -246,7 +246,7 @@
 
   <div class="grid g3" style="margin-top:18px">
     <div class="card"><div class="ic">🧩</div><h3>transforms</h3><p><code>wrap-section</code> (préfixe <code>## titre</code>), <code>wrap-tool-tag</code> (entoure de <code>&lt;tool&gt;</code>), <code>strip-frontmatter</code>.</p></div>
-    <div class="card"><div class="ic">📦</div><h3>extras</h3><p><code>plugin-manifest</code>, <code>marketplace</code>, <code>slash-commands</code>, <code>mcp-snippet</code> (json/jsonc/yaml/toml), <code>agent-skills-index</code>.</p></div>
+    <div class="card"><div class="ic">📦</div><h3>extras</h3><p><code>plugin-manifest</code> (Claude Code &amp; Codex), <code>marketplace</code>, <code>slash-commands</code>, <code>mcp-snippet</code> (json/jsonc/yaml), <code>agent-skills-index</code>.</p></div>
     <div class="card"><div class="ic">✅</div><h3>tests</h3><p>Vitest : un snapshot par plateforme + tests unitaires du build. <code>npm test -- -u</code> ré-bénit après une modif intentionnelle.</p></div>
   </div>
 
@@ -258,7 +258,7 @@
 <!-- TOOLS -->
 <section id="tools"><div class="wrap">
   <div class="eyebrow">Les outils MCP</div>
-  <h2>24 outils, 4 familles</h2>
+  <h2>21 outils, 4 familles</h2>
   <p class="lede">Tous <b>database-backed</b> (un appel, snapshots alignés dans le temps), sauf l'exception <code>get_funding_rates</code> à éviter.</p>
 
   <div class="toolgrp">
@@ -343,11 +343,11 @@
 <!-- BLOCKS -->
 <section id="blocks"><div class="wrap">
   <div class="eyebrow">Les blocs canoniques</div>
-  <h2>9 blocs assemblables</h2>
+  <h2>10 blocs assemblables</h2>
   <p class="lede">Chaque plateforme pioche un sous-ensemble ordonné de ces blocs <code>canonical/*.md</code>.</p>
   <div class="grid g3">
     <div class="card"><div class="ic" style="color:var(--acc)">🌳</div><h3>decision-tree</h3><p>Intention → outil. Le routeur de la skill.</p></div>
-    <div class="card"><div class="ic" style="color:var(--blu)">🛠️</div><h3>tool-reference</h3><p>Les 24 outils, args utiles, contraintes dures.</p></div>
+    <div class="card"><div class="ic" style="color:var(--blu)">🛠️</div><h3>tool-reference</h3><p>Les 21 outils, args utiles, contraintes dures.</p></div>
     <div class="card"><div class="ic" style="color:var(--acc2)">📚</div><h3>domain-knowledge</h3><p>APR en décimales, mécanique delta-neutre, <code>profitAPR</code> ≠ spread brut.</p></div>
     <div class="card"><div class="ic" style="color:var(--red)">⚠️</div><h3>caveats</h3><p>Brut de frais · les taux flippent · liquidité · pas un conseil financier.</p></div>
     <div class="card"><div class="ic" style="color:var(--pur)">⚙️</div><h3>personalization</h3><p>Lit <code>~/.toomanycooks/preferences.md</code> comme defaults par appel.</p></div>
@@ -355,6 +355,7 @@
     <div class="card"><div class="ic">🚨</div><h3>failure-modes</h3><p>Auth error, 429/quota, résultats vides → quoi suggérer.</p></div>
     <div class="card"><div class="ic">💬</div><h3>examples</h3><p>Interactions modèles « top 5 arbs », « compare BTC »…</p></div>
     <div class="card"><div class="ic">🔬</div><h3>advanced-workflows</h3><p>Screens multi-ticker, détection de flip, backtest — chargé à la demande.</p></div>
+    <div class="card"><div class="ic" style="color:var(--blu)">⌨️</div><h3>slash-arguments</h3><p>Dispatch <code>/toomanycooks &lt;action&gt;</code> — 15 actions (<code>rates</code>, <code>arb</code>, <code>simulate</code>…) mappées sur les outils.</p></div>
   </div>
 </div></section>
 
@@ -362,22 +363,22 @@
 <section id="commands"><div class="wrap">
   <div class="eyebrow">Slash commands</div>
   <h2>3 commandes (plugin Claude Code)</h2>
-  <p class="lede">Livrées dans le plugin via l'extra <code>slash-commands</code>. Disponibles uniquement sur la variante plugin.</p>
+  <p class="lede">Livrées dans le plugin via l'extra <code>slash-commands</code>. Les requêtes de données passent par la skill elle-même : <code>/toomanycooks rates BTC</code>, <code>/toomanycooks arb 10 hyperliquid,lighter</code> — 15 actions dispatchées sur les outils (bloc <code>slash-arguments</code>).</p>
   <div class="grid g3">
-    <div class="card" style="border-color:#ff8a3d44">
-      <div class="ic" style="color:var(--acc)">📈</div>
-      <h3><code style="font-size:15px">/tmc-arb</code></h3>
-      <p>Top stratégies delta-neutres maintenant. Appelle <code>find_arbitrage_strategies</code> (count 5, liquidité $1M, 7j), rend une table Ticker | Long→Short | APR. Args = raffinement (nombre = count, liste = filtre exchanges).</p>
-    </div>
     <div class="card" style="border-color:#5aa9ff44">
-      <div class="ic" style="color:var(--blu)">⚖️</div>
-      <h3><code style="font-size:15px">/tmc-rates</code></h3>
-      <p>Compare les funding rates d'un ticker. Appelle <code>get_ticker_markets</code> (uppercased), trie par |APR| desc, remonte la paire <code>suggestedArb</code>. N'utilise jamais <code>get_funding_rates</code>.</p>
+      <div class="ic" style="color:var(--blu)">❓</div>
+      <h3><code style="font-size:15px">/toomanycooks-help</code></h3>
+      <p>Cheat-sheet une page : les actions <code>/toomanycooks &lt;action&gt;</code>, les commandes compagnes, des exemples en langage naturel, et où obtenir la clé. <code>/toomanycooks-help simulate</code> détaille une action.</p>
     </div>
     <div class="card" style="border-color:#b181ff44">
       <div class="ic" style="color:var(--pur)">🎛️</div>
-      <h3><code style="font-size:15px">/tmc-setup</code></h3>
+      <h3><code style="font-size:15px">/toomanycooks-setup</code></h3>
       <p>Setup interactif : exchanges par défaut, seuils de liquidité, tolérance au risque, count, fenêtre. Écrit <code>~/.toomanycooks/preferences.md</code> — relu à chaque requête.</p>
+    </div>
+    <div class="card" style="border-color:#43d9a344">
+      <div class="ic" style="color:var(--grn)">🩺</div>
+      <h3><code style="font-size:15px">/toomanycooks-doctor</code></h3>
+      <p>Diagnostique pourquoi les outils MCP n'apparaissent pas : clé <code>TMC_API_KEY</code> manquante, plugin pas rechargé, serveur pas connecté — et guide la réparation pas à pas.</p>
     </div>
   </div>
 </div></section>
@@ -385,24 +386,15 @@
 <!-- PLATFORMS -->
 <section id="platforms"><div class="wrap">
   <div class="eyebrow">Les plateformes</div>
-  <h2>15 cibles générées</h2>
-  <p class="lede">Chaque dossier <code>platforms/&lt;name&gt;</code> (hors préfixe <code>_</code>) est auto-découvert par le build. Le serveur MCP est identique partout (lancé via <code>npx</code>).</p>
+  <h2>6 cibles construites — le reste via la CLI <code>skills</code></h2>
+  <p class="lede">La CLI <a href="https://github.com/vercel-labs/skills" target="_blank" style="color:var(--acc)"><code>npx skills add</code></a> couvre déjà ~70 éditeurs (Cline, Continue, Windsurf, Roo, Zed, Gemini, Junie, OpenClaw…) en lisant <code>skills/toomanycooks/SKILL.md</code> à la racine du dépôt. Ce build ne produit que ce qu'elle ne sait pas faire. Chaque dossier <code>platforms/&lt;name&gt;</code> (hors préfixe <code>_</code>) est auto-découvert ; le serveur MCP est identique partout (lancé via <code>npx</code>).</p>
   <div class="plats">
-    <div class="plat"><div class="pn"><span class="pe">🟣</span> Claude Code · skill</div><div class="pp">dist/claude-code-skill/SKILL.md → ~/.claude/skills/toomanycooks/</div><div class="chips"><span class="chip x">+personalization</span><span class="chip x">+advanced</span></div></div>
     <div class="plat"><div class="pn"><span class="pe">🟣</span> Claude Code · plugin</div><div class="pp">dist/claude-code-plugin/ — marketplace auto-portée</div><div class="chips"><span class="chip x">3 commands</span><span class="chip x">MCP intégré</span><span class="chip">userConfig key</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">🟩</span> Cursor</div><div class="pp">.cursor/rules/toomanycooks.mdc</div><div class="chips"><span class="chip">mcp-snippet json</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">🔵</span> Cline</div><div class="pp">.clinerules/toomanycooks.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">🟧</span> Continue.dev</div><div class="pp">.continue/rules/toomanycooks.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">⬛</span> Codex CLI</div><div class="pp">AGENTS.snippet.md + ~/.codex/config.toml</div><div class="chips"><span class="chip">mcp-snippet toml</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">⬛</span> Codex · plugin</div><div class="pp">dist/codex-plugin/ — .codex-plugin + .mcp.json</div><div class="chips"><span class="chip x">+personalization</span><span class="chip">env key</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">⬛</span> Codex · plugin</div><div class="pp">dist/codex-plugin/ — .codex-plugin + .mcp.json</div><div class="chips"><span class="chip x">MCP intégré</span><span class="chip">env key</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">✨</span> Agent Skills · <code>npx skills add</code></div><div class="pp">skills/toomanycooks/SKILL.md — commité à la racine, lu par la CLI</div><div class="chips"><span class="chip x">~70 éditeurs</span><span class="chip">mcp-snippet racine</span></div></div>
+    <div class="plat"><div class="pn"><span class="pe">🟩</span> Cursor</div><div class="pp">.cursor/rules/toomanycooks.mdc</div><div class="chips"><span class="chip">mcp-snippet json</span><span class="chip">mirror repo</span></div></div>
     <div class="plat"><div class="pn"><span class="pe">🐙</span> GitHub Copilot</div><div class="pp">.github/copilot-instructions.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">✨</span> Gemini</div><div class="pp">GEMINI.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
     <div class="plat"><div class="pn"><span class="pe">🟠</span> Hermes</div><div class="pp">skills/…/SKILL.md + system-prompt.md fallback</div><div class="chips"><span class="chip x">agent-skills-index</span><span class="chip">.well-known</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">🧩</span> Junie (JetBrains)</div><div class="pp">.junie/guidelines.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">🐾</span> OpenClaw</div><div class="pp">skills/toomanycooks/SKILL.md</div><div class="chips"><span class="chip x">+advanced</span><span class="chip">mcp-snippet</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">🦘</span> Roo Code</div><div class="pp">.roo/rules/toomanycooks.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">🌊</span> Windsurf</div><div class="pp">.windsurf/rules/toomanycooks.md</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
-    <div class="plat"><div class="pn"><span class="pe">⚡</span> Zed</div><div class="pp">.rules</div><div class="chips"><span class="chip">mcp-snippet</span></div></div>
   </div>
 </div></section>
 
@@ -418,7 +410,7 @@
     </div>
     <div class="step">
       <h3>Choisir sa plateforme &amp; déposer la skill/rule</h3>
-      <p>Copier le fichier généré dans le chemin de la plateforme (voir tableau ci-dessus). Détail complet par plateforme dans <code>INSTALL.md</code>.</p>
+      <p>Le plus simple : <code>npx skills add github.com/NaaviX/too-many-cooks-skill</code> (~70 éditeurs, aucun clone). Sinon, plugin Claude Code ci-dessous, ou copie du fichier généré (<code>./install.sh &lt;platform&gt;</code>). Détail complet par plateforme dans <code>INSTALL.md</code>.</p>
     </div>
     <div class="step">
       <h3>Brancher le serveur MCP</h3>
@@ -447,7 +439,7 @@
 
 <span class="c"># tester le build local avant publication</span>
 claude --plugin-dir ./dist/claude-code-plugin</pre>
-      <p style="color:var(--mut);font-size:13px;margin-top:10px">À l'activation, Claude Code demande la <code>TMC_API_KEY</code> (déclarée <code>sensitive</code> en <code>userConfig</code>, stockée dans le keychain OS).</p>
+      <p style="color:var(--mut);font-size:13px;margin-top:10px">Puis définir la clé (requis) : <code>/plugin</code> → Too Many Cooks → <b>Configure options</b> → coller la clé <code>tmc_live_…</code> (stockée dans le keychain OS), puis <code>/reload-plugins</code>. Le serveur MCP ne démarre pas sans elle — en cas de souci, <code>/toomanycooks-doctor</code>.</p>
     </div>
   </div>
 </div></section>
@@ -475,7 +467,7 @@ claude --plugin-dir ./dist/claude-code-plugin</pre>
 </div></section>
 
 <footer><div class="wrap">
-  <div>🍳 <b>Too Many Cooks</b> · skill build pipeline · MIT · v1.2.0</div>
+  <div>🍳 <b>Too Many Cooks</b> · skill build pipeline · MIT · v1.4.0</div>
   <div>Source de vérité : <code class="kbd">canonical/*.md</code> + <code class="kbd">platforms/*/recipe.json</code></div>
 </div></footer>
 

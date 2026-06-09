@@ -18,12 +18,13 @@ jobs:
       - run: npm run build
       # The agent-skills platform writes tracked artifacts at the repo root
       # (skills/toomanycooks/SKILL.md + mcp-snippet.json) so `npx skills add` can
-      # read them from the source repo. Fail if a canonical/ edit was committed
-      # without re-running `npm run build` — i.e. the committed copies are stale.
-      - name: Check committed agent-skills artifacts are in sync
+      # read them from the source repo, and the build stamps the version into
+      # README.md and docs.html. Fail if a canonical/ edit was committed without
+      # re-running `npm run build` — i.e. the committed copies are stale.
+      - name: Check committed build-stamped files are in sync
         run: |
-          git diff --exit-code -- skills/ mcp-snippet.json || {
-            echo "::error::skills/ or mcp-snippet.json is stale. Run 'npm run build' and commit the result."
+          git diff --exit-code -- skills/ mcp-snippet.json README.md docs.html || {
+            echo "::error::Build-stamped files are stale. Run 'npm run build' and commit the result."
             exit 1
           }
       - run: npm test

@@ -1,10 +1,17 @@
 import { createHash } from "node:crypto";
-import { promises as fs } from "node:fs";
+import { promises as fs, readFileSync } from "node:fs";
 import path from "node:path";
+import yaml from "js-yaml";
 import { describe, expect, it } from "vitest";
 import { buildPlatform } from "../scripts/build.js";
+import { stampVersion } from "../scripts/stamp-version.js";
 
 const root = path.resolve(__dirname, "..");
+
+/** Single source of the version — tests must never hardcode it. */
+const { version } = yaml.load(
+	readFileSync(path.join(root, "canonical/_frontmatter.yml"), "utf8"),
+) as { version: string };
 
 /** Primary generated artifact per platform — the file we snapshot. */
 const PLATFORM_OUTPUTS: Record<string, string> = {
@@ -54,7 +61,7 @@ describe("multi-platform build", () => {
 		);
 		const manifest = JSON.parse(raw);
 		expect(manifest.name).toBe("toomanycooks");
-		expect(manifest.version).toBe("1.4.0");
+		expect(manifest.version).toBe(version);
 		expect(manifest.mcpServers.toomanycooks.command).toBe("npx");
 		// A shared plugin must prompt for the key, not ship a baked placeholder.
 		expect(manifest.userConfig.api_key.sensitive).toBe(true);
@@ -72,7 +79,7 @@ describe("multi-platform build", () => {
 		expect(catalog.plugins[0]).toMatchObject({
 			name: "toomanycooks",
 			source: ".",
-			version: "1.4.0",
+			version,
 		});
 	});
 
@@ -81,9 +88,8 @@ describe("multi-platform build", () => {
 		const dir = path.join(root, "dist/claude-code-plugin/commands");
 		const files = (await fs.readdir(dir)).sort();
 		expect(files).toEqual([
-			"toomanycooks-arbitrage.md",
 			"toomanycooks-doctor.md",
-			"toomanycooks-rates.md",
+			"toomanycooks-help.md",
 			"toomanycooks-setup.md",
 		]);
 	});
@@ -106,7 +112,7 @@ describe("multi-platform build", () => {
 			await fs.readFile(path.join(pluginRoot, ".codex-plugin/plugin.json"), "utf8"),
 		);
 		expect(manifest.name).toBe("toomanycooks");
-		expect(manifest.version).toBe("1.4.0");
+		expect(manifest.version).toBe(version);
 		expect(manifest.skills).toBe("./skills/");
 		expect(manifest.mcpServers).toBe("./.mcp.json");
 		expect(manifest.interface.capabilities).toContain("Data");
@@ -137,7 +143,7 @@ describe("multi-platform build", () => {
 		const skill = await fs.readFile(skillPath, "utf8");
 		const wellKnownSkill = await fs.readFile(wellKnownSkillPath);
 		expect(skill).toContain("name: toomanycooks");
-		expect(skill).toContain("version: 1.4.0");
+		expect(skill).toContain(`version: ${version}`);
 		expect(skill).toContain("required_environment_variables:");
 		expect(skill).toContain("name: TMC_API_KEY");
 		expect(skill).toContain("tags:");
@@ -160,5 +166,18 @@ describe("multi-platform build", () => {
 			await fs.readFile(path.join(root, "dist/hermes/.well-known/skills/index.json"), "utf8"),
 		);
 		expect(legacy.skills[0].name).toBe("toomanycooks");
+	});
+
+	it("README and docs.html carry the canonical version (stamped by the build)", async () => {
+		// stampVersion is idempotent: on a clean tree this rewrites nothing and the
+		// committed copies must already display the _frontmatter.yml version.
+		await stampVersion(root, version);
+		const readme = await fs.readFile(path.join(root, "README.md"), "utf8");
+		const docs = await fs.readFile(path.join(root, "docs.html"), "utf8");
+		expect(readme).toContain(`badge/version-${version}-`);
+		expect(docs).toContain(`v${version}`);
+		expect(docs).not.toMatch(
+			new RegExp(`\\bv(?!${version.replaceAll(".", "\\.")})\\d+\\.\\d+\\.\\d+\\b`),
+		);
 	});
 });
