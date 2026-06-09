@@ -2,6 +2,7 @@
 	"outputPath": "dist/codex-plugin/skills/toomanycooks/SKILL.md",
 	"blocks": [
 		"decision-tree",
+		"slash-arguments",
 		"tool-reference",
 		"domain-knowledge",
 		"caveats",

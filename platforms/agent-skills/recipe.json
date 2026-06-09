@@ -2,6 +2,7 @@
 	"outputPath": "skills/toomanycooks/SKILL.md",
 	"blocks": [
 		"decision-tree",
+		"slash-arguments",
 		"tool-reference",
 		"domain-knowledge",
 		"caveats",
@@ -13,6 +14,7 @@
 	],
 	"frontmatter": {
 		"name": "toomanycooks",
+		"argument-hint": "[action] [args] — rates BTC | arb 10 | simulate ETH hyperliquid lighter | spikes | …",
 		"description": "Query crypto perpetuals funding rates and find delta-neutral arbitrage across 25 DEX exchanges (HyperLiquid, Lighter, Extended, Aster, Paradex, EdgeX, …) via the Too Many Cooks API. Triggers on funding-rate, delta-neutral, perp/perp spread, or \"best arb right now\"-type questions."
 	},
 	"extrasDir": ".",

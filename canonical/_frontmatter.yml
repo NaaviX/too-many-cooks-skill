@@ -1,6 +1,6 @@
 name: toomanycooks
 displayName: Too Many Cooks
-version: 1.3.0
+version: 1.4.0
 description: Query crypto perpetuals funding rates and find delta-neutral arbitrage across 25 DEX exchanges (HyperLiquid, Lighter, Extended, Aster, Paradex, EdgeX, …) via the Too Many Cooks API. Triggers on funding-rate, delta-neutral, perp/perp spread, or "best arb right now"-type questions.
 homepage: https://toomanycooks.app
 license: MIT
