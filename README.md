@@ -45,12 +45,14 @@ Three steps: **get a key → pick your platform → add the MCP server.**
 
 #### Claude Code
 
-> ⭐ **Recommended.** One install bundles the skill, the MCP server, and three slash commands. Prompts for your key on enable — skip step 3.
+> ⭐ **Recommended.** One install bundles the skill, the MCP server, and four slash commands — no MCP config to hand-edit (skip step 3).
 
 ```text
 /plugin marketplace add naavix/toomanycooks-plugin
 /plugin install toomanycooks@toomanycooks
 ```
+
+> 🔑 **Then set your key (required):** `/plugin` → **Too Many Cooks → Configure options** → paste your `tmc_live_…` key, then `/reload-plugins`. The MCP server won't start until it's set (it shows *"Plugin option api_key isn't set"*). Stuck? Run **`/toomanycooks-doctor`**.
 
 #### Codex
 

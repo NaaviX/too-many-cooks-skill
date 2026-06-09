@@ -20,8 +20,9 @@ take the MCP config separately. The two plugins (Claude Code, Codex) bundle both
 Two one-line installs cover most users; everything below them is the manual
 fallback for the remaining hosts.
 
-- **Claude Code → plugin.** Bundles the skill, the MCP server, and three slash
-  commands. Prompts for your API key at enable time — nothing to hand-edit.
+- **Claude Code → plugin.** Bundles the skill, the MCP server, and four slash
+  commands. Set your API key via `/plugin → Configure options` (required — the
+  MCP won't start without it); no MCP config file to hand-edit.
 
   ```text
   /plugin marketplace add naavix/toomanycooks-plugin
@@ -84,17 +85,28 @@ cd skill && npm install && npm run build   # populates dist/ for every built pla
 
 ## Claude Code — plugin (recommended)
 
-One install bundles the skill, the MCP server, and three slash commands
-(`/toomanycooks-arbitrage`, `/toomanycooks-rates`, `/toomanycooks-setup`). The plugin repo doubles as its own
-marketplace.
+One install bundles the skill, the MCP server, and four slash commands
+(`/toomanycooks-arbitrage`, `/toomanycooks-rates`, `/toomanycooks-setup`, `/toomanycooks-doctor`).
+The plugin repo doubles as its own marketplace.
 
 ```text
 /plugin marketplace add naavix/toomanycooks-plugin
 /plugin install toomanycooks@toomanycooks
 ```
 
-On enable, Claude Code prompts for your `TMC_API_KEY` (declared as a `sensitive`
-`userConfig` value and stored in the OS keychain) — no MCP config to hand‑edit.
+**Set your API key — required, and the step people miss.** The `TMC_API_KEY` is a
+`sensitive`, `required` `userConfig` value (stored in the OS keychain, never a plain
+file). The plugin will **not** start its MCP server until it's set, and reports
+*"Plugin option api_key isn't set"* until then. Set it via:
+
+```text
+/plugin → Too Many Cooks → Configure options → paste your tmc_live_… key
+/reload-plugins
+/mcp        # confirm the toomanycooks server is connected
+```
+
+Get a free key at https://toomanycooks.app/dashboard/api-keys. If the MCP tools
+never show up, run **`/toomanycooks-doctor`** — it walks through the fix.
 
 Test a local build before publishing:
 

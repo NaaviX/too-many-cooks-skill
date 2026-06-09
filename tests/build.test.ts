@@ -54,7 +54,7 @@ describe("multi-platform build", () => {
 		);
 		const manifest = JSON.parse(raw);
 		expect(manifest.name).toBe("toomanycooks");
-		expect(manifest.version).toBe("1.2.0");
+		expect(manifest.version).toBe("1.3.0");
 		expect(manifest.mcpServers.toomanycooks.command).toBe("npx");
 		// A shared plugin must prompt for the key, not ship a baked placeholder.
 		expect(manifest.userConfig.api_key.sensitive).toBe(true);
@@ -72,7 +72,7 @@ describe("multi-platform build", () => {
 		expect(catalog.plugins[0]).toMatchObject({
 			name: "toomanycooks",
 			source: ".",
-			version: "1.2.0",
+			version: "1.3.0",
 		});
 	});
 
@@ -82,6 +82,7 @@ describe("multi-platform build", () => {
 		const files = (await fs.readdir(dir)).sort();
 		expect(files).toEqual([
 			"toomanycooks-arbitrage.md",
+			"toomanycooks-doctor.md",
 			"toomanycooks-rates.md",
 			"toomanycooks-setup.md",
 		]);
@@ -105,7 +106,7 @@ describe("multi-platform build", () => {
 			await fs.readFile(path.join(pluginRoot, ".codex-plugin/plugin.json"), "utf8"),
 		);
 		expect(manifest.name).toBe("toomanycooks");
-		expect(manifest.version).toBe("1.2.0");
+		expect(manifest.version).toBe("1.3.0");
 		expect(manifest.skills).toBe("./skills/");
 		expect(manifest.mcpServers).toBe("./.mcp.json");
 		expect(manifest.interface.capabilities).toContain("Data");
@@ -136,7 +137,7 @@ describe("multi-platform build", () => {
 		const skill = await fs.readFile(skillPath, "utf8");
 		const wellKnownSkill = await fs.readFile(wellKnownSkillPath);
 		expect(skill).toContain("name: toomanycooks");
-		expect(skill).toContain("version: 1.2.0");
+		expect(skill).toContain("version: 1.3.0");
 		expect(skill).toContain("required_environment_variables:");
 		expect(skill).toContain("name: TMC_API_KEY");
 		expect(skill).toContain("tags:");
