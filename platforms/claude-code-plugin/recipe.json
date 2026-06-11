@@ -3,14 +3,30 @@
 	"blocks": [
 		"decision-tree",
 		"slash-arguments",
-		"tool-reference",
 		"domain-knowledge",
 		"caveats",
-		"personalization",
 		"output-formatting",
 		"failure-modes",
 		"examples",
-		"advanced-workflows"
+		"reference-index"
+	],
+	"bundledReferences": [
+		{
+			"outputPath": "dist/claude-code-plugin/skills/toomanycooks/reference/tool-reference.md",
+			"blocks": ["tool-reference"]
+		},
+		{
+			"outputPath": "dist/claude-code-plugin/skills/toomanycooks/reference/personalization.md",
+			"blocks": ["personalization"]
+		},
+		{
+			"outputPath": "dist/claude-code-plugin/skills/toomanycooks/reference/advanced-workflows.md",
+			"blocks": ["advanced-workflows"]
+		},
+		{
+			"outputPath": "dist/claude-code-plugin/skills/toomanycooks/reference/mcp-troubleshooting.md",
+			"blocks": ["mcp-troubleshooting"]
+		}
 	],
 	"frontmatter": {
 		"name": "toomanycooks",

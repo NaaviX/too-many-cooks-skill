@@ -14,6 +14,16 @@ const AdditionalOutputSchema = z.object({
 	transforms: z.array(TransformSchema).optional(),
 });
 
+/**
+ * A bundled reference doc written *alongside* the main SKILL.md (in `reference/`),
+ * loaded by the agent on demand. Unlike `additionalOutputs` (which re-emits the
+ * primary body), each reference picks its *own* canonical blocks.
+ */
+const BundledReferenceSchema = z.object({
+	outputPath: z.string().min(1),
+	blocks: z.array(z.string()).min(1),
+});
+
 const ExtraSchema = z.discriminatedUnion("kind", [
 	z.object({ kind: z.literal("plugin-manifest"), source: z.string() }),
 	z.object({ kind: z.literal("codex-plugin-manifest"), source: z.string() }),
@@ -42,6 +52,11 @@ export const RecipeSchema = z.object({
 	frontmatter: FrontmatterSchema.optional(),
 	transforms: z.array(TransformSchema).optional(),
 	additionalOutputs: z.array(AdditionalOutputSchema).optional(),
+	/**
+	 * Reference docs written next to the SKILL.md (e.g. `reference/*.md`) from their
+	 * own canonical blocks, for progressive disclosure — kept out of the lean core.
+	 */
+	bundledReferences: z.array(BundledReferenceSchema).optional(),
 	/**
 	 * Where `extras` (manifest, marketplace, slash-commands) are written, relative
 	 * to the repo root. Defaults to the directory of `outputPath`. Plugins need

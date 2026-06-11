@@ -7,6 +7,7 @@
 		"caveats",
 		"output-formatting",
 		"failure-modes",
+		"mcp-troubleshooting",
 		"examples"
 	],
 	"transforms": [{ "kind": "wrap-section", "title": "Too Many Cooks (funding rates + arb)" }],

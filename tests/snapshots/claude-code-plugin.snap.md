@@ -60,63 +60,6 @@ Fallbacks:
 - **Unknown first word** — treat the whole input as a natural-language funding question and route
   it through the decision tree instead.
 
-## Tool reference
-
-All tools below are **database-backed** (one request, time-aligned snapshots) except the single `get_funding_rates` exception in the next section.
-
-### Strategy & arbitrage
-
-| Tool | When | Useful args |
-|---|---|---|
-| `find_arbitrage_strategies` | **Default for arbitrage questions.** | `count`, `exchanges: []`, `minVolume24h: 1000000`, `minOpenInterest: 1000000`, `periodDays` |
-| `find_strategy_for_ticker` | Best long/short pair for **one** ticker | `ticker`, `exchanges: []`, `periodDays` |
-| `find_spot_strategies` | Spot/perp cash-and-carry pairs | `count`, `exchanges: []`, `periodDays` |
-| `simulate_strategy` | Project funding (and net-of-cost) PnL for a perp/perp pair | `ticker`, `longExchange`, `shortExchange`, `notional`, `days`, `periodDays` |
-| `simulate_spot_strategy` | Project PnL for a spot/perp pair | `exchange`, `ticker`, `notional`, `days`, `periodDays` |
-
-### Discovery & market data
-
-| Tool | When | Useful args |
-|---|---|---|
-| `list_exchanges` | Need a valid exchange key, or user asks what's supported | — |
-| `list_tickers` | Which tickers exist and on which exchanges | `search`, `marketTypes: []` |
-| `get_aggregated_markets` | Cross-exchange snapshot in one call (replaces fan-out) | `exchanges: []`, `tickers: []`, `marketTypes: []`, `minVolume24h`, `limit` |
-| `get_market_extremes` | Highest/lowest funding right now | `direction`, `count`, `exchanges: []`, `minVolume24h` |
-| `get_funding_spikes` | "What's unusual right now" — cross-exchange z-score outliers | `threshold`, `count`, `minExchanges`, `exchanges: []` |
-| `get_ticker_markets` | One ticker across exchanges (includes `suggestedArb`) | `ticker`, `sort`, `minVolume24h` |
-| `compare_tickers` | Several tickers across exchanges in one call | `tickers: []`, `sort`, `minVolume24h` |
-| `get_market_for_ticker_on_exchange` | Live single market lookup (one ticker, one exchange) | `exchange`, `ticker` |
-| `get_historical_funding` | Rate evolution over time, or "current rate" via the latest point | `exchange`, `tickers: []`, `periodDays` |
-
-### Execution costs, status & meta
-
-| Tool | When | Useful args |
-|---|---|---|
-| `get_execution_cost_history` | Slippage + fees over time for one exchange/ticker | `exchange`, `ticker`, `size`, `periodDays` |
-| `get_strategy_execution_cost_history` | Round-trip cost over time for a delta-neutral pair | `longExchange`, `shortExchange`, `ticker`, `size`, `periodDays` |
-| `get_exchange_status` | Data freshness for an exchange (last cron write) | `exchange` |
-| `get_platform_stats` | Platform overview / totals | — |
-| `get_plans` | API plans: quotas, limits, pricing (`-1` = unlimited) | — |
-| `whoami` | Auth debug, quota report | — |
-
-### Do NOT use
-
-| Tool | Why | Reroute to |
-|---|---|---|
-| `get_funding_rates` | Hits live exchange APIs — slow, unaligned, not the supported path | `get_aggregated_markets` with `exchanges: [key]`, or `get_historical_funding` (latest point) |
-
-`compare_exchanges_for_ticker` is now backed by the DB-aggregated `/tickers/:ticker/markets` endpoint (1 quota point). Prefer `get_ticker_markets` for richer output (includes `suggestedArb`), but either is safe.
-
-The DB stores periodically-collected, time-aligned, deduped snapshots. Live-exchange queries are for ingestion, not analysis.
-
-### Hard argument constraints
-
-- `tickers` must be **UPPERCASE strings**, **1–20 per call** (e.g. `["BTC", "ETH"]`, never `["btc"]`).
-- `count` ≤ **50**, `periodDays` ≤ **30** (execution-cost tools allow `periodDays` ≤ **60**). Anything larger is rejected.
-- Execution-cost `size` is a bucket: one of `"1k" | "5k" | "10k" | "50k" | "100k"` (defaults to `"10k"`).
-- Exchange keys are lowercase (e.g. `"hyperliquid"`, `"edgex"`). Get them from `list_exchanges` if unsure — never invent.
-- `list_exchanges` returns a `supportsRWA` flag — filter on it when the user asks about stocks, forex, or commodities perps.
-
 ## Non-obvious domain knowledge
 
 - **APRs are returned as decimals** — `0.15` = 15% APR. Multiply by 100 only at display time.
@@ -129,38 +72,6 @@ The DB stores periodically-collected, time-aligned, deduped snapshots. Live-exch
 2. **Rates flip** — a +30% APR today can be −10% tomorrow. Active monitoring required.
 3. **Liquidity matters** — high APR on $50k OI is meaningless (slippage). Apply `minVolume24h: 1000000`, `minOpenInterest: 1000000` when relevance matters.
 4. **Not financial advice** — surface market structure, don't recommend trades.
-
-## Personalization
-
-These are the user-tunable defaults (the "dials"): `exchanges`, `minVolume24h`, `minOpenInterest`, `count`, `periodDays`, `riskTolerance`, `quote`. They live in one file and override nothing the user types inline.
-
-Before answering a funding-rate or arbitrage question, check for a user preferences file at `~/.toomanycooks/preferences.md`. If it exists, parse its `key: value` lines and treat them as **defaults** for every tool call. Never block on a missing file — if it isn't there, behave normally (and, in Claude Code, you may suggest running `/toomanycooks-setup` once to capture defaults). Inline instructions in the user's message always override the file.
-
-The file uses simple `key: value` lines (lines starting with `#` are comments):
-
-```
-exchanges: hyperliquid, lighter, extended
-minVolume24h: 1000000
-minOpenInterest: 1000000
-count: 5
-periodDays: 7
-riskTolerance: balanced
-quote: USDC
-```
-
-Map each key to the matching tool parameter:
-
-| Key | Applies to | Effect |
-|---|---|---|
-| `exchanges` | any tool with an `exchanges: []` arg (`find_arbitrage_strategies`, `get_aggregated_markets`, `get_market_extremes`, …) | Pass these lowercase keys as the `exchanges` filter. `exchanges: all` (or empty) means no filter. If a tool lacks the arg, post-filter results to these venues. |
-| `minVolume24h` | strategy / market scans | Default `minVolume24h`. |
-| `minOpenInterest` | `find_arbitrage_strategies` and pair scans | Default `minOpenInterest`. |
-| `count` | `find_arbitrage_strategies`, `get_market_extremes`, list-style tools | Default result `count`. |
-| `periodDays` | `find_arbitrage_strategies`, `get_historical_funding`, … | Default lookback / funding window. |
-| `riskTolerance` | ranking & filtering | `conservative` → raise the liquidity floors and prefer stable, persistent spreads; `aggressive` → loosen floors and surface higher-APR / higher-variance pairs; `balanced` → use defaults. |
-| `quote` | strategy selection | When ranking is otherwise close, prefer pairs settled in this quote/collateral asset. |
-
-When you apply preferences, say so briefly (e.g. "using your saved defaults: HyperLiquid/Lighter, $1M liquidity floor") so the user knows personalization is active.
 
 ## Output formatting
 
@@ -179,27 +90,8 @@ Funding rate history → sort by absolute APR of the latest point (most extreme 
 - **Auth error** → user should check `TMC_API_KEY` in their MCP config.
 - **429 / quota** → suggest waiting for reset or upgrading at https://toomanycooks.app/pricing.
 - **Empty strategy results** → volume/OI filters likely too tight; suggest relaxing them.
-
-### No Too Many Cooks tools available (MCP not registered)
-
-If none of the `toomanycooks` tools (`list_exchanges`, `find_arbitrage_strategies`, …) are
-callable, the MCP server isn't connected for this session. **Don't keep retrying** — walk the
-user through this checklist, in order. The cause is almost always a missing `TMC_API_KEY`.
-
-1. **Confirm the server is configured.** It must be registered for the platform — a Claude Code /
-   Codex **plugin** that's *enabled*, or an `mcpServers.toomanycooks` entry in the platform's MCP
-   config file (`.mcp.json`, `~/.cursor/mcp.json`, `.vscode/mcp.json`, …).
-2. **Check the API key (the usual culprit).** The config needs `TMC_API_KEY=tmc_live_…`. A free key
-   is at https://toomanycooks.app/dashboard/api-keys. **Plugin users:** the key is a *required*
-   `userConfig` value — open `/plugin`, select **Too Many Cooks → Configure options**, and paste it
-   there (it's stored in the OS keychain, not a plain file). The plugin shows
-   *"Plugin option api_key isn't set"* until you do.
-3. **Reload.** After setting the key, run `/reload-plugins` (or restart the agent) and re-check
-   `/mcp` — the server may need a one-time per-server approval the first time.
-4. **Prove the server boots, in isolation.** If it still won't connect, the user can run, in a
-   terminal: `TMC_API_KEY=tmc_live_… npx -y @toomanycooks/mcp-server`. A healthy server prints
-   `[toomanycooks] MCP server vX.Y.Z listening on stdio`. If that line appears, the package is fine
-   and the problem is the agent's config/reload; if it errors, surface that error.
+- **No `toomanycooks` tools callable at all** → the MCP server isn't connected; **don't keep
+  retrying** — walk the user through `reference/mcp-troubleshooting.md` (usually a missing `TMC_API_KEY`).
 
 ## Example interactions
 
@@ -213,6 +105,18 @@ user through this checklist, in order. The cause is almost always a missing `TMC
 
 **"What's an arbitrage strategy?"** → Explain the long-low/short-high mechanic. Optionally call `find_arbitrage_strategies` with `count: 3` to ground the explanation.
 
-## Advanced workflows
+## Reference files (load on demand)
 
-For multi-step analysis (multi-ticker screens, funding-flip detection, backtesting a delta-neutral pair, realized-PnL reconstruction), see the bundled recipes reference. Load it on demand — not for one-off lookups.
+This skill bundles deeper reference docs in `reference/`. They are **not** needed for routine
+lookups — load one only when the situation calls for it, then act on it.
+
+- **`reference/tool-reference.md`** — full per-tool parameter tables, hard argument constraints
+  (ticker casing, `count`/`periodDays` caps, execution-cost `size` buckets), and the
+  `get_funding_rates` "do NOT use" reroute. Read it when you need a tool's exact arguments.
+- **`reference/personalization.md`** — the `~/.toomanycooks/preferences.md` defaults (`exchanges`,
+  liquidity floors, `riskTolerance`, `quote`, …) and how each key maps to a tool parameter. Read it
+  before applying saved user defaults.
+- **`reference/advanced-workflows.md`** — multi-step recipes (multi-ticker screens, funding-flip
+  detection, backtesting, realized-PnL reconstruction). Read it for genuinely multi-step analysis.
+- **`reference/mcp-troubleshooting.md`** — what to do when **no** `toomanycooks` tool is callable
+  (MCP server not registered). Read it only in that failure case.

@@ -64,4 +64,28 @@ describe("RecipeSchema", () => {
 		expect(parsed.additionalOutputs).toHaveLength(1);
 		expect(parsed.extras).toHaveLength(3);
 	});
+
+	it("validates bundledReferences", () => {
+		const parsed = RecipeSchema.parse({
+			outputPath: "skills/toomanycooks/SKILL.md",
+			blocks: ["decision-tree"],
+			bundledReferences: [
+				{
+					outputPath: "skills/toomanycooks/reference/tool-reference.md",
+					blocks: ["tool-reference"],
+				},
+			],
+		});
+		expect(parsed.bundledReferences).toHaveLength(1);
+	});
+
+	it("rejects a bundledReference with no blocks", () => {
+		expect(() =>
+			RecipeSchema.parse({
+				outputPath: "skills/toomanycooks/SKILL.md",
+				blocks: ["decision-tree"],
+				bundledReferences: [{ outputPath: "skills/toomanycooks/reference/x.md", blocks: [] }],
+			}),
+		).toThrow();
+	});
 });

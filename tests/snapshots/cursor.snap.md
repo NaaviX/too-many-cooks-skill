@@ -116,8 +116,10 @@ Funding rate history → sort by absolute APR of the latest point (most extreme 
 - **Auth error** → user should check `TMC_API_KEY` in their MCP config.
 - **429 / quota** → suggest waiting for reset or upgrading at https://toomanycooks.app/pricing.
 - **Empty strategy results** → volume/OI filters likely too tight; suggest relaxing them.
+- **No `toomanycooks` tools callable at all** → the MCP server isn't connected; **don't keep
+  retrying** — walk the user through `reference/mcp-troubleshooting.md` (usually a missing `TMC_API_KEY`).
 
-### No Too Many Cooks tools available (MCP not registered)
+## No Too Many Cooks tools available (MCP not registered)
 
 If none of the `toomanycooks` tools (`list_exchanges`, `find_arbitrage_strategies`, …) are
 callable, the MCP server isn't connected for this session. **Don't keep retrying** — walk the

@@ -59,17 +59,32 @@ export async function buildPlatform(name: string, ctx: BuildContext): Promise<vo
 		// header.md is optional
 	}
 
-	const blocks = await Promise.all(
-		recipe.blocks.map((b) => fs.readFile(path.join(canonicalDir, `${b}.md`), "utf8")),
-	);
+	/** Read the named canonical blocks and join them like the primary body. */
+	async function assembleBlocks(blockNames: string[], lead = ""): Promise<string> {
+		const loaded = await Promise.all(
+			blockNames.map((b) => fs.readFile(path.join(canonicalDir, `${b}.md`), "utf8")),
+		);
+		return [lead, ...loaded]
+			.map((s) => s.trim())
+			.filter((s) => s.length > 0)
+			.join("\n\n");
+	}
 
-	const segments = [header, ...blocks].map((s) => s.trim()).filter((s) => s.length > 0);
-	const baseBody = segments.join("\n\n");
+	const baseBody = await assembleBlocks(recipe.blocks, header);
 	const body = renderBody(baseBody, recipe, baseFrontmatter.version);
 
 	const outputPath = path.join(ctx.rootDir, recipe.outputPath);
 	await fs.mkdir(path.dirname(outputPath), { recursive: true });
 	await fs.writeFile(outputPath, `${body}\n`);
+
+	if (recipe.bundledReferences) {
+		for (const reference of recipe.bundledReferences) {
+			const referenceBody = await assembleBlocks(reference.blocks);
+			const referencePath = path.join(ctx.rootDir, reference.outputPath);
+			await fs.mkdir(path.dirname(referencePath), { recursive: true });
+			await fs.writeFile(referencePath, `${referenceBody}\n`);
+		}
+	}
 
 	if (recipe.additionalOutputs) {
 		for (const output of recipe.additionalOutputs) {

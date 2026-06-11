@@ -122,6 +122,35 @@ describe("multi-platform build", () => {
 		expect(mcp.mcpServers.toomanycooks.env.TMC_API_KEY).toBe("${TMC_API_KEY}");
 	});
 
+	it("agent-skills splits deep reference into on-demand bundled files", async () => {
+		await buildPlatform("agent-skills", { rootDir: root });
+		const refDir = "skills/toomanycooks/reference";
+		for (const name of [
+			"tool-reference",
+			"personalization",
+			"advanced-workflows",
+			"mcp-troubleshooting",
+		]) {
+			const out = await fs.readFile(path.join(root, refDir, `${name}.md`), "utf8");
+			await expect(out).toMatchFileSnapshot(`snapshots/agent-skills-reference-${name}.snap.md`);
+		}
+		// The deep reference must NOT remain inline in the lean core SKILL.md.
+		const core = await fs.readFile(path.join(root, "skills/toomanycooks/SKILL.md"), "utf8");
+		expect(core).not.toContain("Useful args");
+		expect(core).toContain("Reference files (load on demand)");
+	});
+
+	it("each plugin bundles the same reference/ tree next to its SKILL.md", async () => {
+		for (const platform of ["claude-code-plugin", "codex-plugin"]) {
+			await buildPlatform(platform, { rootDir: root });
+			await expect(
+				fs.access(
+					path.join(root, `dist/${platform}/skills/toomanycooks/reference/tool-reference.md`),
+				),
+			).resolves.toBeUndefined();
+		}
+	});
+
 	it("every MCP-wired platform emits a runnable mcp-snippet.json", async () => {
 		for (const platform of ["hermes", "cursor", "copilot", "agent-skills"]) {
 			await buildPlatform(platform, { rootDir: root });
