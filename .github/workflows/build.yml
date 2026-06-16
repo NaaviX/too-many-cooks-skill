@@ -23,7 +23,7 @@ jobs:
       # re-running `npm run build` — i.e. the committed copies are stale.
       - name: Check committed build-stamped files are in sync
         run: |
-          git diff --exit-code -- skills/ mcp-snippet.json README.md docs.html || {
+          git diff --exit-code -- skills/ mcp-snippet.json README.md docs.html llms.txt || {
             echo "::error::Build-stamped files are stale. Run 'npm run build' and commit the result."
             exit 1
           }

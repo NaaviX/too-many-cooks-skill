@@ -110,6 +110,54 @@ export async function buildPlatform(name: string, ctx: BuildContext): Promise<vo
 	}
 }
 
+interface SkillFrontmatter {
+	name: string;
+	displayName?: string;
+	version: string;
+	description: string;
+	homepage?: string;
+	license?: string;
+}
+
+/**
+ * Emit a root `llms.txt` (llmstxt.org) — the discovery convention for the
+ * agent-skills / skills.sh ecosystem. Derived entirely from
+ * `canonical/_frontmatter.yml` so the headline facts can never drift from the
+ * built skill. Tracked in git and guarded by the CI staleness check.
+ */
+export async function writeLlmsTxt(rootDir: string, fm: SkillFrontmatter): Promise<string> {
+	const title = fm.displayName ?? fm.name;
+	const homepage = fm.homepage ?? "https://toomanycooks.app";
+	const body = `# ${title}
+
+> ${fm.description}
+
+Two pieces: the **MCP server** (\`@toomanycooks/mcp-server\`) gives the agent the tools, and **this skill** gives it the know-how — which tool to reach for, how to read APRs, and what caveats to surface. Version ${fm.version}.
+
+## Install
+
+- [Add the skill (any of ~70 agents)](https://github.com/NaaviX/too-many-cooks-skill): \`npx skills add NaaviX/too-many-cooks-skill\`
+- [Get a free API key](${homepage}/dashboard/api-keys): 100 req/day, looks like \`tmc_live_…\`, passed as \`TMC_API_KEY\`
+
+## Skill
+
+- [SKILL.md](skills/toomanycooks/SKILL.md): the core skill — decision tree, slash actions, caveats, output formatting
+- [tool-reference.md](skills/toomanycooks/reference/tool-reference.md): full per-tool parameter tables and argument constraints
+- [personalization.md](skills/toomanycooks/reference/personalization.md): \`~/.toomanycooks/preferences.md\` defaults and how each key maps to a tool parameter
+- [advanced-workflows.md](skills/toomanycooks/reference/advanced-workflows.md): multi-step recipes (screens, funding-flip detection, backtesting)
+- [mcp-troubleshooting.md](skills/toomanycooks/reference/mcp-troubleshooting.md): what to do when no \`toomanycooks\` tool is callable
+
+## Optional
+
+- [README.md](README.md): per-platform install matrix (Claude Code, Codex, Cursor, Copilot, Hermes)
+- [INSTALL.md](INSTALL.md): full per-platform paths and step-by-step setup
+- [CHANGELOG.md](CHANGELOG.md): version history
+`;
+	const outPath = path.join(rootDir, "llms.txt");
+	await fs.writeFile(outPath, body);
+	return "llms.txt";
+}
+
 async function main(): Promise<void> {
 	const rootDir = path.resolve(import.meta.dirname, "..");
 	const platformsDir = path.join(rootDir, "platforms");
@@ -129,11 +177,14 @@ async function main(): Promise<void> {
 		path.join(rootDir, "canonical", "_frontmatter.yml"),
 		"utf8",
 	);
-	const { version } = yaml.load(frontmatterRaw) as { version: string };
-	const stamped = await stampVersion(rootDir, version);
+	const frontmatter = yaml.load(frontmatterRaw) as SkillFrontmatter;
+	const stamped = await stampVersion(rootDir, frontmatter.version);
 	for (const file of stamped) {
-		console.log(`  ✓ stamped v${version} into ${file}`);
+		console.log(`  ✓ stamped v${frontmatter.version} into ${file}`);
 	}
+
+	const llms = await writeLlmsTxt(rootDir, frontmatter);
+	console.log(`  ✓ generated ${llms}`);
 }
 
 const isEntry = import.meta.url === `file://${process.argv[1]}`;

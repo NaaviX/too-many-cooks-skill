@@ -58,6 +58,8 @@ Per-platform build order in `build.ts`: read recipe → load base frontmatter �
 (with `$version` substituted from `_frontmatter.yml`) → write `outputPath` → render `extras`.
 After all platforms, `scripts/stamp-version.ts` rewrites the version strings in `README.md` (badge)
 and `docs.html` from `_frontmatter.yml` — never edit those by hand; a build test enforces the match.
+The build then generates a root **`llms.txt`** (llmstxt.org discovery file) from `_frontmatter.yml`
+via `writeLlmsTxt` in `build.ts` — also tracked and never hand-edited.
 
 ### recipe.json shape (validated by Zod in `scripts/recipe-schema.ts`)
 
@@ -78,8 +80,9 @@ and `docs.html` from `_frontmatter.yml` — never edit those by hand; a build te
 To change the skill's knowledge (new MCP tool, pricing, caveat, example):
 
 1. Edit the relevant **`canonical/<block>.md` once** — all platforms that list that block inherit it.
-2. Bump `version` in **`canonical/_frontmatter.yml`** if it's a meaningful release.
-3. `npm run build` to regenerate `dist/`.
+2. Bump `version` in **`canonical/_frontmatter.yml`** if it's a meaningful release, and add a
+   matching `## [version]` entry to **`CHANGELOG.md`** (`tests/recipes.test.ts` fails without one).
+3. `npm run build` to regenerate `dist/` (and the tracked root `llms.txt`).
 4. `npm test -- -u` to re-bless the per-platform snapshots (`tests/snapshots/*.snap.md`). Any
    canonical edit **will** fail the snapshot tests until re-blessed — that's expected, not a bug.
 5. Commit. Do **not** commit `dist/` (gitignored) or hand-edit generated files; fix the canonical
@@ -91,8 +94,8 @@ To change the skill's knowledge (new MCP tool, pricing, caveat, example):
 can read them straight from the source repo — there is **no mirror** for this platform). They are
 still generated: after any `canonical/` edit, `npm run build` rewrites them, so re-commit them with
 the snapshot re-bless. CI enforces this — `build.yml` runs `npm run build` then
-`git diff --exit-code -- skills/ mcp-snippet.json`, so a `canonical/` edit committed without
-rebuilding these fails the build. Never hand-edit `skills/toomanycooks/SKILL.md` — edit `canonical/`
+`git diff --exit-code -- skills/ mcp-snippet.json README.md docs.html llms.txt`, so a `canonical/`
+edit committed without rebuilding these fails the build. Never hand-edit `skills/toomanycooks/SKILL.md` — edit `canonical/`
 instead. (Root `SKILL.md` is the separate hand-maintained standalone copy; don't confuse the two.)
 
 To add a platform: create `platforms/<name>/recipe.json` (+ optional `header.md`); `build.ts`

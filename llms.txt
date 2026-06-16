@@ -1,0 +1,24 @@
+# Too Many Cooks
+
+> Query crypto perpetuals funding rates and find delta-neutral arbitrage across 25 DEX exchanges (HyperLiquid, Lighter, Extended, Aster, Paradex, EdgeX, …) via the Too Many Cooks API. Triggers on funding-rate, delta-neutral, perp/perp spread, or "best arb right now"-type questions.
+
+Two pieces: the **MCP server** (`@toomanycooks/mcp-server`) gives the agent the tools, and **this skill** gives it the know-how — which tool to reach for, how to read APRs, and what caveats to surface. Version 1.5.0.
+
+## Install
+
+- [Add the skill (any of ~70 agents)](https://github.com/NaaviX/too-many-cooks-skill): `npx skills add NaaviX/too-many-cooks-skill`
+- [Get a free API key](https://toomanycooks.app/dashboard/api-keys): 100 req/day, looks like `tmc_live_…`, passed as `TMC_API_KEY`
+
+## Skill
+
+- [SKILL.md](skills/toomanycooks/SKILL.md): the core skill — decision tree, slash actions, caveats, output formatting
+- [tool-reference.md](skills/toomanycooks/reference/tool-reference.md): full per-tool parameter tables and argument constraints
+- [personalization.md](skills/toomanycooks/reference/personalization.md): `~/.toomanycooks/preferences.md` defaults and how each key maps to a tool parameter
+- [advanced-workflows.md](skills/toomanycooks/reference/advanced-workflows.md): multi-step recipes (screens, funding-flip detection, backtesting)
+- [mcp-troubleshooting.md](skills/toomanycooks/reference/mcp-troubleshooting.md): what to do when no `toomanycooks` tool is callable
+
+## Optional
+
+- [README.md](README.md): per-platform install matrix (Claude Code, Codex, Cursor, Copilot, Hermes)
+- [INSTALL.md](INSTALL.md): full per-platform paths and step-by-step setup
+- [CHANGELOG.md](CHANGELOG.md): version history

@@ -90,11 +90,11 @@ Hermes reads the `required_environment_variables` block in `SKILL.md` and prompt
 Cline, Continue, Windsurf, Roo, Zed, Gemini, Junie, OpenClaw, Claude Code and ~60 more are supported targets of the [`skills`](https://github.com/vercel-labs/skills) CLI. It pulls the skill straight from this repo — no clone, no build:
 
 ```bash
-npx skills add github.com/NaaviX/too-many-cooks-skill
-# pick specific agents:  npx skills add github.com/NaaviX/too-many-cooks-skill -a cline -a windsurf
+npx skills add NaaviX/too-many-cooks-skill
+# pick specific agents:  npx skills add NaaviX/too-many-cooks-skill -a cline -a windsurf
 ```
 
-This installs the **know-how only** — finish with step 3.
+This installs the **know-how only** — finish with step 3. The same command is how the skill is discoverable on the **[skills.sh](https://skills.sh)** directory — no separate submission; it ranks by installs.
 
 ### 3. Add the MCP server
 
@@ -164,7 +164,7 @@ npm run check       # Biome lint + format
 
 We only build the artifacts `npx skills add` **can't** produce — the two plugins, `cursor`, `copilot`, `hermes`, and the canonical root skill the CLI itself reads. Everything else is delegated to the CLI.
 
-To change the knowledge (new tool, pricing, caveat): edit the relevant `canonical/*.md` block **once**, bump `version` in `canonical/_frontmatter.yml`, `npm run build`, re-bless snapshots, commit. The build also stamps the version into this README's badge and `docs.html`, so never edit those version strings by hand. Never hand-edit `dist/` (gitignored) or the generated `skills/toomanycooks/` tree (`SKILL.md` + `reference/*.md`) — fix the canonical source. The agent-skills/plugin builds keep a lean core `SKILL.md` and push deep reference (tool params, personalization, MCP troubleshooting, advanced workflows) into `reference/*.md`, loaded on demand. CI mirrors the marketplace-bound outputs to their standalone repos ([MARKETPLACES.md](./MARKETPLACES.md)).
+To change the knowledge (new tool, pricing, caveat): edit the relevant `canonical/*.md` block **once**, bump `version` in `canonical/_frontmatter.yml`, add a [`CHANGELOG.md`](./CHANGELOG.md) entry for that version (a test fails without one), `npm run build`, re-bless snapshots, commit. The build also stamps the version into this README's badge, `docs.html`, and the generated [`llms.txt`](./llms.txt) discovery file, so never edit those version strings by hand. Never hand-edit `dist/` (gitignored) or the generated `skills/toomanycooks/` tree (`SKILL.md` + `reference/*.md`) — fix the canonical source. The agent-skills/plugin builds keep a lean core `SKILL.md` and push deep reference (tool params, personalization, MCP troubleshooting, advanced workflows) into `reference/*.md`, loaded on demand. CI mirrors the marketplace-bound outputs to their standalone repos ([MARKETPLACES.md](./MARKETPLACES.md)).
 
 A visual tour of the pipeline (French) lives in [docs.html](./docs.html) — open it in a browser.
 
